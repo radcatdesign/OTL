@@ -13,6 +13,7 @@ import { PersonSheet } from '../ui/PersonSheet';
 import { QR } from '../ui/QR';
 import { Sheet } from '../ui/Sheet';
 import { inviteLink } from '../ui/InviteSheet';
+import { useWide } from '../lib/useWide';
 
 export function Lawn() {
   const { id } = useParams();
@@ -31,6 +32,7 @@ export function Lawn() {
   const [person, setPerson] = useState<string | null>(null);
   const [gate, setGate] = useState('');
   const [gateErr, setGateErr] = useState('');
+  const wide = useWide();
 
   useEffect(() => {
     if ((loc.state as { justCreated?: boolean } | null)?.justCreated) {
@@ -76,14 +78,14 @@ export function Lawn() {
     }
   };
 
-  return (
-    <>
+  const topC = <>
       <div className="row">
         <button className="btn cream small" onClick={() => (window.history.length > 1 ? nav(-1) : nav('/'))}>Back</button>
         <span className="grow" />
         <span className="pill">{whenLabel(ev)}</span>
       </div>
-
+    </>;
+  const heroC = <>
       <section className="event-card stack" style={{ ['--card' as string]: C[ev.color], color: fg, minHeight: 0, padding: 20, gap: 14, display: 'flex', flexDirection: 'column' }} aria-labelledby="lawn-title">
         <h1 id="lawn-title" className={`display h1 ${dark ? 'outlined' : ''}`} style={{ color: dark ? undefined : C.pine }}>{ev.title}</h1>
         <div className="stack" style={{ gap: 4 }}>
@@ -103,7 +105,8 @@ export function Lawn() {
           {ev.visibility === 'invite' && <span className="pill">Invite only</span>}
         </div>
       </section>
-
+    </>;
+  const actionC = <>
       {/* Primary action */}
       {isHost ? (
         <section className="card stack" aria-labelledby="host-tools">
@@ -168,7 +171,8 @@ export function Lawn() {
           )}
         </section>
       )}
-
+    </>;
+  const sceneC = <>
       <section className="stack" aria-labelledby="the-lawn">
         <div className="row between">
           <h2 id="the-lawn" className="display h3">The lawn</h2>
@@ -186,14 +190,16 @@ export function Lawn() {
         />
         <p className="small strong center">Tap anyone's Otis to see their card.</p>
       </section>
-
+    </>;
+  const aboutC = <>
       {ev.about && (
         <section className="card stack">
           <h2 className="display h3">What's happening</h2>
           <p style={{ maxWidth: '62ch' }}>{ev.about}</p>
         </section>
       )}
-
+    </>;
+  const whoC = <>
       {going.length > 0 && (
         <section className="card stack" aria-labelledby="who">
           <h2 id="who" className="display h3">Who's {past ? 'been here' : 'coming'}</h2>
@@ -211,9 +217,38 @@ export function Lawn() {
           </div>
         </section>
       )}
-
+    </>;
+  const leaveLink = <>
       {!isHost && mine && mine.status !== 'invited' && (
         <button className="link-btn" style={{ alignSelf: 'center' }} onClick={() => { leave(ev.id); }}>Leave this lawn</button>
+      )}
+    </>;
+
+  return (
+    <>
+      {topC}
+      {wide ? (
+        <div className="cols">
+          <div className="col">
+            {heroC}
+            {sceneC}
+            {aboutC}
+          </div>
+          <aside className="rail">
+            {actionC}
+            {whoC}
+            {leaveLink}
+          </aside>
+        </div>
+      ) : (
+        <>
+          {heroC}
+          {actionC}
+          {sceneC}
+          {aboutC}
+          {whoC}
+          {leaveLink}
+        </>
       )}
 
       <InviteSheet ev={ev} open={inviteOpen} onClose={() => setInviteOpen(false)} />

@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { HashRouter, MemoryRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { useMe } from './lib/store';
+import { useWide } from './lib/useWide';
 import { Explore } from './screens/Explore';
 import { Garden } from './screens/Garden';
 import { Gardens } from './screens/Gardens';
@@ -14,6 +15,7 @@ import { Studio } from './screens/Studio';
 import { Welcome } from './screens/Welcome';
 import { BottomNav, TopBar } from './ui/Chrome';
 import { Celebration, Toasts } from './ui/Feedback';
+import { Sidebar } from './ui/Sidebar';
 import { World } from './ui/World';
 
 function ScrollToTop() {
@@ -24,47 +26,43 @@ function ScrollToTop() {
   return null;
 }
 
+// Phone: one column with a top bar and bottom tabs. Desktop: sidebar plus a wide canvas.
+function Frame({ children, bare = false }: { children: ReactNode; bare?: boolean }) {
+  const me = useMe();
+  const wide = useWide();
+  if (wide && me) {
+    return (
+      <div className="frame">
+        <Sidebar />
+        <main className="shell desk">{children}</main>
+      </div>
+    );
+  }
+  return (
+    <>
+      <main className="shell" style={bare || !me ? { paddingBottom: 40 } : undefined}>
+        {me && <TopBar />}
+        {children}
+      </main>
+      <BottomNav />
+    </>
+  );
+}
+
 function SignedIn() {
   const me = useMe();
   const loc = useLocation();
   if (!me) return <Navigate to="/" replace state={{ from: loc.pathname }} />;
-  return (
-    <>
-      <main className="shell">
-        <TopBar />
-        <Outlet />
-      </main>
-      <BottomNav />
-    </>
-  );
+  return <Frame><Outlet /></Frame>;
 }
 
 function Root() {
   const me = useMe();
-  return me ? (
-    <>
-      <main className="shell">
-        <TopBar />
-        <Home />
-      </main>
-      <BottomNav />
-    </>
-  ) : (
-    <Welcome />
-  );
+  return me ? <Frame><Home /></Frame> : <Welcome />;
 }
 
 function OpenShell() {
-  const me = useMe();
-  return (
-    <>
-      <main className="shell" style={me ? undefined : { paddingBottom: 40 }}>
-        {me && <TopBar />}
-        <Outlet />
-      </main>
-      <BottomNav />
-    </>
-  );
+  return <Frame bare><Outlet /></Frame>;
 }
 
 function AppRoutes() {

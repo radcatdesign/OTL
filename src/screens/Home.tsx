@@ -4,6 +4,7 @@ import { OtisAvatar } from '../brand/otis/Otis';
 import { levelFor, statsFor, xpFor, XP } from '../lib/game';
 import { userById, useMe, useStore } from '../lib/store';
 import { isPast } from '../lib/util';
+import { useWide } from '../lib/useWide';
 import { EventCard } from '../ui/EventCard';
 
 export function Home() {
@@ -11,6 +12,7 @@ export function Home() {
   const db = useStore((s) => s.db);
   const demo = useStore((s) => s.demo);
   const rsvp = useStore((s) => s.rsvp);
+  const wide = useWide();
   const stats = statsFor(db, me.id);
   const xp = xpFor(stats);
   const lvl = levelFor(xp);
@@ -40,8 +42,7 @@ export function Home() {
   const open = quests.filter((q) => !q.done);
   const doneCount = quests.length - open.length;
 
-  return (
-    <>
+  const helloC = <>
       <section className="card stack" aria-labelledby="hello">
         <div className="row" style={{ alignItems: 'flex-start' }}>
           <div className="grow stack" style={{ gap: 4 }}>
@@ -53,6 +54,8 @@ export function Home() {
         <div className="meter" aria-label="Progress to next level"><span style={{ width: `${Math.round(lvl.progress * 100)}%` }} /></div>
       </section>
 
+    </>;
+  const demoCard = <>
       {demo && flagship && !atFlagship && (
         <section className="card stack" style={{ background: 'var(--sun)' }}>
           <div className="row">
@@ -64,6 +67,8 @@ export function Home() {
         </section>
       )}
 
+    </>;
+  const invitesCard = <>
       {invites.length > 0 && (
         <section className="stack" aria-labelledby="invites">
           <h2 id="invites" className="display h3">You're invited</h2>
@@ -81,6 +86,8 @@ export function Home() {
         </section>
       )}
 
+    </>;
+  const questsCard = <>
       {open.length > 0 && (
         <section className="card stack" aria-labelledby="quests">
           <div className="row between">
@@ -99,13 +106,15 @@ export function Home() {
         </section>
       )}
 
+    </>;
+  const yoursC = <>
       <section className="stack" aria-labelledby="yours">
         <div className="row between">
           <h2 id="yours" className="display h3">Your lawns</h2>
           <span className="pill">{stats.lawns}</span>
         </div>
         {mine.length ? (
-          mine.map((ev) => <EventCard key={ev.id} ev={ev} />)
+          <div className="card-grid">{mine.map((ev) => <EventCard key={ev.id} ev={ev} />)}</div>
         ) : (
           <div className="card stack center" style={{ alignItems: 'center' }}>
             <Icon name="picnicTable" size={56} />
@@ -115,13 +124,49 @@ export function Home() {
         )}
       </section>
 
+    </>;
+  const discoverC = <>
       {discover.length > 0 && (
         <section className="stack" aria-labelledby="near">
           <h2 id="near" className="display h3">Lawns around Bend</h2>
-          {discover.slice(0, 3).map((ev) => <EventCard key={ev.id} ev={ev} compact />)}
-          {discover.length > 3 && <Link to="/explore" className="btn cream block">See all lawns</Link>}
+          <div className="card-grid">{discover.slice(0, wide ? 4 : 3).map((ev) => <EventCard key={ev.id} ev={ev} compact />)}</div>
+          {discover.length > (wide ? 4 : 3) && <Link to="/explore" className="btn cream block">See all lawns</Link>}
         </section>
       )}
+    </>;
+
+  if (wide) {
+    return (
+      <>
+        <div className="page-head">
+          <div className="stack" style={{ gap: 6 }}>
+            <h1 className="display h1">Hi, {me.name.split(' ')[0]}</h1>
+            <p className="lede strong">{lvl.next ? `${lvl.toNext} XP to ${lvl.next.name}. Water a seed or check in somewhere new.` : 'Top of the lawn. Keep it growing.'}</p>
+          </div>
+        </div>
+        <div className="cols">
+          <div className="col">
+            {yoursC}
+            {discoverC}
+          </div>
+          <aside className="rail">
+            {demoCard}
+            {invitesCard}
+            {questsCard}
+          </aside>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {helloC}
+      {demoCard}
+      {invitesCard}
+      {questsCard}
+      {yoursC}
+      {discoverC}
     </>
   );
 }

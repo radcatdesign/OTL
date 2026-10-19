@@ -12,6 +12,7 @@ import { ago, stageOf, wateringsFor } from '../lib/util';
 import { PersonSheet } from '../ui/PersonSheet';
 import { Sheet } from '../ui/Sheet';
 import { Tilt } from '../ui/Tilt';
+import { useWide } from '../lib/useWide';
 
 export function Garden() {
   const { id } = useParams();
@@ -23,6 +24,7 @@ export function Garden() {
   const [planting, setPlanting] = useState(false);
   const [openSeed, setOpenSeed] = useState<string | null>(null);
   const [person, setPerson] = useState<string | null>(null);
+  const wide = useWide();
 
   if (!ev) {
     return (
@@ -57,14 +59,15 @@ export function Garden() {
   const pairs = new Set(blooms.flatMap((s) => [s.userId, ...s.partners]));
   const news = db.activity.filter((a) => a.eventId === ev.id && ['planted', 'watered', 'bloomed', 'checked_in'].includes(a.kind)).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
 
-  return (
-    <>
+  const topC = <>
       <div className="row">
         <button className="btn cream small" onClick={() => nav(`/lawn/${ev.id}`)}>Lawn</button>
         <span className="grow" />
         <button className="btn sun small" onClick={() => setPlanting(true)}><Icon name="plant" size={24} /> Plant a seed</button>
       </div>
 
+    </>;
+  const headerC = <>
       <section className="card stack" style={{ background: C.soil, color: C.cream, padding: '18px 18px 16px' }} aria-labelledby="garden-title">
         <h1 id="garden-title" className="display h2 outlined">{ev.title} garden</h1>
         <p className="strong" style={{ maxWidth: '40ch' }}>Plant what you're looking for. When someone offers help, they water it. Pick who you'll grow it with and it blooms for everyone to see.</p>
@@ -75,7 +78,9 @@ export function Garden() {
         </div>
       </section>
 
-      <div className="row" style={{ overflowX: 'auto', paddingBottom: 6, marginInline: -4, paddingInline: 4 }} role="group" aria-label="Filter seeds">
+    </>;
+  const filtersC = <>
+      <div className={wide ? 'row-wrap' : 'row'} style={wide ? undefined : { overflowX: 'auto', paddingBottom: 6, marginInline: -4, paddingInline: 4 }} role="group" aria-label="Filter seeds">
         <button className="chip" aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>All</button>
         <button className="chip" aria-pressed={filter === 'mine'} onClick={() => setFilter('mine')} style={{ whiteSpace: 'nowrap' }}>Mine</button>
         {SEED_INTENTS.map((i) => (
@@ -85,8 +90,10 @@ export function Garden() {
         ))}
       </div>
 
+    </>;
+  const plotsC = <>
       {shown.length ? (
-        <div className="grid-2" style={{ gap: 14 }}>
+        <div className={wide ? 'plot-grid' : 'grid-2'} style={wide ? undefined : { gap: 14 }}>
           {shown.map((s) => <Plot key={s.id} seed={s} db={db} meId={me.id} onOpen={() => setOpenSeed(s.id)} />)}
         </div>
       ) : (
@@ -97,6 +104,8 @@ export function Garden() {
         </div>
       )}
 
+    </>;
+  const newsCard = <>
       {news.length > 0 && (
         <section className="card stack" aria-labelledby="garden-news">
           <h2 id="garden-news" className="display h3">Garden news</h2>
@@ -104,6 +113,49 @@ export function Garden() {
             {news.map((a) => <NewsRow key={a.id} a={a} db={db} meId={me.id} onSeed={setOpenSeed} />)}
           </div>
         </section>
+      )}
+    </>;
+
+  return (
+    <>
+      {topC}
+      {wide ? (
+        <div className="cols">
+          <div className="col">
+            {headerC}
+            {filtersC}
+            {plotsC}
+          </div>
+          <aside className="rail">
+            <section className="card stack" aria-labelledby="how-it-grows">
+      <h2 id="how-it-grows" className="display h3">How seeds grow</h2>
+      <div className="list">
+        {([
+          ['seed', 'Planted', 'Someone shares what they need.'],
+          ['sprout', 'Sprouting', 'A neighbor waters it with an offer.'],
+          ['bud', 'Budding', 'More offers keep it growing.'],
+          ['bloom', 'In bloom', 'The planter picks who to grow it with.'],
+        ] as const).map(([stage, name, line], i) => (
+          <div key={stage} className="list-row" style={{ alignItems: 'center' }}>
+            <Plant stage={stage} color={SEED_INTENTS[i].color} accent={SEED_INTENTS[i].accent} size={46} />
+            <div className="grow">
+              <p className="strong">{name}</p>
+              <p className="small muted">{line}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+            {newsCard}
+          </aside>
+        </div>
+      ) : (
+        <>
+          {headerC}
+          {filtersC}
+          {plotsC}
+          {newsCard}
+        </>
       )}
 
       <PlantSheet eventId={ev.id} open={planting} onClose={() => setPlanting(false)} onPlanted={(sid) => { setPlanting(false); setTimeout(() => setOpenSeed(sid), 250); }} />

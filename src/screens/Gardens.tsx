@@ -28,7 +28,7 @@ export function Gardens() {
         </div>
       )}
 
-      {open.map((ev) => {
+      {open.length > 0 && <div className="card-grid">{open.map((ev) => {
         const seeds = db.seeds.filter((s) => s.eventId === ev.id);
         const thirsty = seeds.filter((s) => !s.bloomedAt && wateringsFor(db, s.id).length === 0 && s.userId !== me.id).length;
         const mine = seeds.filter((s) => s.userId === me.id);
@@ -59,7 +59,7 @@ export function Gardens() {
             </Link>
           </Tilt>
         );
-      })}
+      })}</div>}
 
       {locked.length > 0 && (
         <section className="card stack">

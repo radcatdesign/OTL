@@ -23,7 +23,7 @@ export function Explore() {
         <button className="chip" aria-pressed={when === 'past'} onClick={() => setWhen('past')}>Past lawns</button>
       </div>
       {list.length ? (
-        list.map((ev) => <EventCard key={ev.id} ev={ev} />)
+        <div className="card-grid">{list.map((ev) => <EventCard key={ev.id} ev={ev} />)}</div>
       ) : (
         <div className="card stack center" style={{ alignItems: 'center' }}>
           <Icon name="basket" size={56} />

@@ -26,7 +26,7 @@ export function InviteLanding() {
   const joined = me && membershipOf(db, ev.id, me.id)?.status !== undefined && membershipOf(db, ev.id, me.id)?.status !== 'invited';
 
   return (
-    <>
+    <div className="stack-lg" style={{ width: '100%', maxWidth: 560, alignSelf: 'center' }}>
       {!me && <div style={{ display: 'grid', placeItems: 'center' }}><Wordmark width={200} /></div>}
       {inviter && (
         <div className="row" style={{ justifyContent: 'center' }}>
@@ -47,6 +47,6 @@ export function InviteLanding() {
           <p className="center small strong">Takes about a minute. Then you're on the list.</p>
         </div>
       )}
-    </>
+    </div>
   );
 }

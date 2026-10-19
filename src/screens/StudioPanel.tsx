@@ -22,12 +22,13 @@ const PATTERN_SWATCH: Record<string, string> = {
   xtreme: `repeating-linear-gradient(90deg, ${C.tomato} 0 4px, transparent 4px 7px, ${C.lawn} 7px 9px, transparent 9px 14px), repeating-linear-gradient(0deg, ${C.sky} 0 3px, ${C.cream} 3px 7px)`,
 };
 
-export function StudioPanel({ look, onChange, stats, level, compact = false }: {
+export function StudioPanel({ look, onChange, stats, level, compact = false, split = false }: {
   look: OtisLook;
   onChange: (l: OtisLook) => void;
   stats: Stats | null; // null = brand-new user, nothing unlocked yet
   level: number;
   compact?: boolean;
+  split?: boolean; // preview beside the controls on wide screens
 }) {
   const [tab, setTab] = useState<Tab>('hat');
   const [bump, setBump] = useState(0);
@@ -38,20 +39,21 @@ export function StudioPanel({ look, onChange, stats, level, compact = false }: {
   const s = stats ?? { lawns: 0, attended: 0, hosted: 0, planted: 0, watered: 0, blooms: 0, invitesAccepted: 0, supported: 0, donated: 0, connections: 0 };
 
   return (
-    <div className="stack-lg">
-      <div style={{ position: 'relative', display: 'grid', placeItems: 'center', background: 'linear-gradient(180deg, #8fc3fb, #d7ecfd)', border: '3px solid var(--pine)', borderRadius: 26, padding: compact ? '14px 0 8px' : '22px 0 12px', overflow: 'hidden' }}>
+    <div className={`studio-grid ${split ? 'split' : ''}`}>
+      <div style={{ position: 'relative', display: 'grid', placeItems: 'center', background: 'linear-gradient(180deg, #8fc3fb, #d7ecfd)', border: '3px solid var(--pine)', borderRadius: 26, padding: split ? '36px 0 18px' : compact ? '14px 0 8px' : '22px 0 12px', overflow: 'hidden' }}>
         <div aria-hidden style={{ position: 'absolute', inset: 'auto 0 0 0', height: '22%', background: C.lawn, borderTop: '3px solid var(--pine)' }} />
         <motion.div
           key={bump}
           initial={{ scale: 0.94, y: 6 }}
           animate={{ scale: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 520, damping: 14 }}
-          style={{ width: compact ? 150 : 180, position: 'relative' }}
+          style={{ width: split ? 'min(250px, 62%)' : compact ? 150 : 180, position: 'relative' }}
         >
           <Otis look={look} />
         </motion.div>
       </div>
 
+      <div className="stack-lg">
       <div className="row-wrap" role="tablist" aria-label="Customize Otis">
         {TABS.map((t) => (
           <button key={t.key} role="tab" aria-selected={tab === t.key} aria-pressed={tab === t.key} className="chip" onClick={() => setTab(t.key)}>
@@ -152,6 +154,7 @@ export function StudioPanel({ look, onChange, stats, level, compact = false }: {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

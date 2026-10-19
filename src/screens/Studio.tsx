@@ -28,7 +28,7 @@ export function Studio() {
           <h1 className="display h2">Otis studio</h1>
           <p className="muted strong">Level {lvl.number} unlocks are open. Locked pieces show what earns them.</p>
         </div>
-        <StudioPanel look={look} onChange={setLook} stats={stats} level={lvl.number} />
+        <StudioPanel look={look} onChange={setLook} stats={stats} level={lvl.number} split />
         <button className="btn sun block" disabled={!changed} onClick={() => { update({ otis: look }); toast({ text: 'Otis is looking sharp', tone: 'good' }); nav('/me'); }}>
           {changed ? 'Save Otis' : 'No changes yet'}
         </button>

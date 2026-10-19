@@ -8,6 +8,7 @@ import { useMe, useStore } from '../lib/store';
 import { fmtDay } from '../lib/util';
 import { ProfileCard } from '../ui/ProfileCard';
 import { Sheet } from '../ui/Sheet';
+import { useWide } from '../lib/useWide';
 
 export function Me() {
   const me = useMe()!;
@@ -18,6 +19,7 @@ export function Me() {
   const resetDemo = useStore((s) => s.resetDemo);
   const [editing, setEditing] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const wide = useWide();
   const stats = statsFor(db, me.id);
   const xp = xpFor(stats);
   const lvl = levelFor(xp);
@@ -27,16 +29,16 @@ export function Me() {
   ]);
   const lawns = db.events.filter((e) => lawnIds.has(e.id)).sort((a, b) => b.startsAt - a.startsAt);
 
-  return (
-    <>
-      <ProfileCard user={me} lawns={stats.lawns} width="min(80vw, 310px)" />
+  const cardBlock = <>
+      <ProfileCard user={me} lawns={stats.lawns} width="min(80vw, 290px)" />
       <p className="pill" style={{ alignSelf: 'center' }}>Tap your card to flip it</p>
 
       <div className="grid-2">
         <Link to="/studio" className="btn sun">Dress Otis</Link>
         <button className="btn cream" onClick={() => setEditing(true)}>Edit profile</button>
       </div>
-
+    </>;
+  const lawnCountC = <>
       <section className="card stack" aria-labelledby="lawn-count">
         <div className="row" style={{ alignItems: 'center' }}>
           <div className="grow">
@@ -50,7 +52,8 @@ export function Me() {
           <div className="stat"><b>{stats.hosted}</b><span>Hosted</span></div>
         </div>
       </section>
-
+    </>;
+  const levelC = <>
       <section className="card stack" aria-labelledby="level">
         <div className="row between">
           <h2 id="level" className="display h3">Level {lvl.number}: {lvl.name}</h2>
@@ -65,10 +68,11 @@ export function Me() {
           <div className="stat"><b>{stats.connections}</b><span>People grown with</span></div>
         </div>
       </section>
-
+    </>;
+  const badgesC = <>
       <section className="card stack" aria-labelledby="badges">
         <h2 id="badges" className="display h3">Badges</h2>
-        <div className="grid-2">
+        <div className={wide ? 'badge-grid' : 'grid-2'}>
           {BADGES.map((b) => {
             const earned = b.earned(stats);
             const [have, need] = b.progress(stats);
@@ -84,7 +88,8 @@ export function Me() {
           })}
         </div>
       </section>
-
+    </>;
+  const lawnsList = <>
       {lawns.length > 0 && (
         <section className="card stack" aria-labelledby="my-lawns">
           <h2 id="my-lawns" className="display h3">Your lawns</h2>
@@ -99,7 +104,8 @@ export function Me() {
           </div>
         </section>
       )}
-
+    </>;
+  const accountC = <>
       <div className="stack">
         <button className="btn cream block" onClick={() => { signOut(); nav('/'); }}>Sign out</button>
         {demo && (
@@ -116,6 +122,35 @@ export function Me() {
           )
         )}
       </div>
+    </>;
+
+  return (
+    <>
+      {wide ? (
+        <div className="cols lead">
+          <div className="rail" style={{ gap: 16 }}>
+            {cardBlock}
+            {accountC}
+          </div>
+          <div className="col">
+            <div className="pair">
+              {lawnCountC}
+              {levelC}
+            </div>
+            {badgesC}
+            {lawnsList}
+          </div>
+        </div>
+      ) : (
+        <>
+          {cardBlock}
+          {lawnCountC}
+          {levelC}
+          {badgesC}
+          {lawnsList}
+          {accountC}
+        </>
+      )}
 
       <EditProfile open={editing} onClose={() => setEditing(false)} />
     </>

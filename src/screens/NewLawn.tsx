@@ -6,6 +6,7 @@ import { Otis } from '../brand/otis/Otis';
 import { C, COLOR_KEYS, COLOR_NAMES, onColor, type ColorKey } from '../brand/palette';
 import { useMe, useStore } from '../lib/store';
 import { dateParts, fmtLongDay, fmtRange } from '../lib/util';
+import { useWide } from '../lib/useWide';
 
 const DONATE_URL = (import.meta.env.VITE_OTL_DONATE_URL as string | undefined) || '';
 const AMOUNTS = [5, 15, 35, 75];
@@ -41,6 +42,7 @@ export function NewLawn() {
   const [custom, setCustom] = useState('');
   const [err, setErr] = useState('');
   const [created, setCreated] = useState<{ id: string; amount: number } | null>(null);
+  const wide = useWide();
 
   const startsAt = useMemo(() => new Date(`${date}T${start}`).getTime(), [date, start]);
   const endsAt = useMemo(() => new Date(`${date}T${end}`).getTime(), [date, end]);
@@ -75,7 +77,7 @@ export function NewLawn() {
 
   if (created) {
     return (
-      <div className="card stack-lg center" style={{ alignItems: 'center' }}>
+      <div className="card stack-lg center" style={{ alignItems: 'center', width: '100%', maxWidth: 560, alignSelf: 'center' }}>
         <div style={{ width: 120 }}><Otis look={{ ...me.otis, companion: 'ladybug' }} /></div>
         <h1 className="display h2">Thank you</h1>
         <p className="lede">Your lawn is live, and it shows a little sprout for supporting OTL. That's the honest system. We trust you to finish your ${created.amount} gift.</p>
@@ -89,16 +91,7 @@ export function NewLawn() {
     );
   }
 
-  return (
-    <>
-      <div className="row">
-        <button className="btn cream small" onClick={() => (i === 0 ? nav(-1) : go(STEPS[i - 1]))}>Back</button>
-        <div className="meter grow" role="progressbar" aria-valuemin={1} aria-valuemax={3} aria-valuenow={i + 1} aria-label={`Step ${i + 1} of 3`}>
-          <span style={{ width: `${((i + 1) / 3) * 100}%` }} />
-        </div>
-      </div>
-
-      {step !== 'honest' && (
+  const previewC = (
         <div aria-label="Preview" className="event-card" style={{ ['--card' as string]: C[color], color: fg, minHeight: 168 }}>
           <div aria-hidden style={{ position: 'absolute', right: -8, bottom: -58, width: 108, transform: 'rotate(-5deg)' }}>
             <Otis look={me.otis} shadow={false} />
@@ -109,8 +102,9 @@ export function NewLawn() {
             <p className="small strong">{venue || 'Somewhere in Bend'}</p>
           </div>
         </div>
-      )}
-
+  );
+  const stepsC = (
+    <>
       <AnimatePresence mode="wait">
         <motion.div key={step} initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -30, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 32 }}>
           {step === 'what' && (
@@ -234,6 +228,47 @@ export function NewLawn() {
           )}
         </motion.div>
       </AnimatePresence>
+    </>
+  );
+
+  return (
+    <>
+      <div className="row">
+        <button className="btn cream small" onClick={() => (i === 0 ? nav(-1) : go(STEPS[i - 1]))}>Back</button>
+        <div className="meter grow" role="progressbar" aria-valuemin={1} aria-valuemax={3} aria-valuenow={i + 1} aria-label={`Step ${i + 1} of 3`}>
+          <span style={{ width: `${((i + 1) / 3) * 100}%` }} />
+        </div>
+      </div>
+
+      {wide ? (
+        <div className="cols">
+          <div className="col">{stepsC}</div>
+          <aside className="rail">
+            <p className="label">How it shows up</p>
+            {previewC}
+            <section className="card stack">
+              <h2 className="display h4">Every lawn comes with</h2>
+              <div className="list">
+                {([
+                  ['location', 'A gate code that opens the garden for people who show up'],
+                  ['letter', 'An invite link, QR code, and guest list'],
+                  ['tulip', 'A garden that stays open after the event'],
+                ] as const).map(([icon, line]) => (
+                  <div key={icon} className="list-row" style={{ alignItems: 'center' }}>
+                    <Icon name={icon} size={34} />
+                    <p className="small strong grow">{line}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </aside>
+        </div>
+      ) : (
+        <>
+          {step !== 'honest' && previewC}
+          {stepsC}
+        </>
+      )}
     </>
   );
 }

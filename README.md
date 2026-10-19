@@ -15,6 +15,10 @@ Built by RADCAT Design with Three Pines. Visuals come straight from the OTL Figm
 7. **The honest system.** Hosting is free. When creating a lawn, hosts can keep it free or chip in to OTL with a suggested or custom amount. Lawns that chip in show a "Supports OTL" sprout. Nothing is locked either way.
 8. **Gamified.** XP for joining, checking in, planting, watering, blooming, hosting, and bringing people. Seven levels from Seed to Lawn legend, badges, a daily quest list, level-up and bloom celebrations, 3D tilt cards.
 
+## Phone and desktop
+
+One app, two layouts. Under 1024px it's the phone layout: top bar, bottom tabs, one column. At 1024px and up it becomes a desktop web app: a sidebar with your Otis, level and a Host button, two-column pages with a sticky side rail (garden news and the growth guide in gardens, check-in and guest list on lawns), card grids for lawns and gardens, the Otis studio with the preview beside the controls, and the host form with a live preview card.
+
 ## Added beyond the brief
 
 - **Each event is a literal lawn.** Everyone's Otis stands on the event's lawn scene. Tap one to see their card.

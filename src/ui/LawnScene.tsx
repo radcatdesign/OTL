@@ -20,7 +20,7 @@ export function LawnScene({ members, users, seeds, hostId, meId, onPick, onGarde
   return (
     <div
       className="card flat"
-      style={{ padding: 0, overflow: 'hidden', background: 'linear-gradient(180deg, #8fc3fb 0%, #d7ecfd 34%, #8cb200 34.2%, #86ad00 100%)', height: 'clamp(300px, 78vw, 400px)' }}
+      style={{ padding: 0, overflow: 'hidden', background: 'linear-gradient(180deg, #8fc3fb 0%, #d7ecfd 34%, #8cb200 34.2%, #86ad00 100%)', height: 'var(--scene-h, clamp(300px, 78vw, 400px))' }}
     >
       <svg aria-hidden viewBox="0 0 400 300" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
         <path d="M0 102C70 94 140 90 210 96C280 102 340 96 400 100" stroke="#16541A" strokeWidth="3" fill="none" vectorEffect="non-scaling-stroke" />
@@ -65,7 +65,7 @@ export function LawnScene({ members, users, seeds, hostId, meId, onPick, onGarde
           <div
             key={m.id}
             style={{
-              position: 'absolute', left: `${left}%`, top: `${top}%`, width: `${13 * depth}%`, minWidth: 42, maxWidth: 96,
+              position: 'absolute', left: `${left}%`, top: `${top}%`, width: `${13 * depth}%`, minWidth: 42, maxWidth: 'var(--otis-max, 96px)',
               transform: 'translate(-50%, -88%)', zIndex: Math.round(m.spot.y * 100) + 10,
             }}
           >
