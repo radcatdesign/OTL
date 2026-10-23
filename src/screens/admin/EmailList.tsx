@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { C, COLOR_KEYS, COLOR_NAMES, type ColorKey } from '../../brand/palette';
 import { parseCSV, rowsToContacts, toCSV, validEmail } from '../../lib/email';
-import { downloadText } from '../../lib/media';
+import { saveFile } from '../../lib/media';
 import { useStore } from '../../lib/store';
 import type { Contact, Group } from '../../lib/types';
 import { useWide } from '../../lib/useWide';
@@ -184,8 +184,9 @@ export function EmailList({ group }: { group: Group }) {
   const exportCsv = async () => {
     const csv = toCSV(db, filtered);
     const name = `${group.slug}-${activeList ? activeList.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'contacts'}.csv`;
-    if (downloadText(name, csv, 'text/csv')) toast({ text: `Exported ${filtered.length} contacts`, tone: 'good' });
-    else toast({ text: (await copyText(csv)) ? 'Downloads are blocked here, so the CSV is on your clipboard.' : 'Export is blocked in this preview.', tone: 'info' });
+    const r = await saveFile(name, csv, 'text/csv');
+    if (r === 'saved') toast({ text: `Exported ${filtered.length} contacts`, tone: 'good' });
+    else if (r === 'unavailable') toast({ text: (await copyText(csv)) ? 'Downloads are blocked here, so the CSV is on your clipboard.' : 'Export is blocked in this preview.', tone: 'info' });
   };
 
   return (

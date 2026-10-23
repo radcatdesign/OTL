@@ -24,8 +24,25 @@ export async function fileToDataUrl(file: File, max = 1400, quality = 0.82): Pro
   }
 }
 
-// Save a text file. Works in browsers; some embedded previews block downloads.
-export function downloadText(filename: string, text: string, type = 'text/plain') {
+type SaveResult = 'saved' | 'declined' | 'unavailable';
+type DownloadsNs = { save: (r: { filename: string; data: string }) => Promise<unknown> };
+type ClaudeHost = { use?: (name: string) => Promise<unknown> };
+
+// Save a text file. Inside the Claude artifact viewer, files go through its downloads
+// capability (the viewer confirms). Everywhere else it's a normal browser download.
+export async function saveFile(filename: string, text: string, type = 'text/plain'): Promise<SaveResult> {
+  const host = (window as unknown as { claude?: ClaudeHost }).claude;
+  if (host?.use) {
+    let dl: DownloadsNs | null = null;
+    try { dl = (await host.use('downloads')) as DownloadsNs | null; } catch { dl = null; }
+    if (!dl) return 'unavailable';
+    try {
+      await dl.save({ filename, data: text });
+      return 'saved';
+    } catch (e) {
+      return (e as { code?: string })?.code === 'declined' ? 'declined' : 'unavailable';
+    }
+  }
   try {
     const blob = new Blob([text], { type });
     const url = URL.createObjectURL(blob);
@@ -36,8 +53,8 @@ export function downloadText(filename: string, text: string, type = 'text/plain'
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
-    return true;
+    return 'saved';
   } catch {
-    return false;
+    return 'unavailable';
   }
 }

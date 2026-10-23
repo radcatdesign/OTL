@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { C, COLOR_KEYS, COLOR_NAMES, onColor } from '../../brand/palette';
 import { audienceFor, emailBody, renderEmailHtml, validEmail } from '../../lib/email';
-import { fileToDataUrl, downloadText } from '../../lib/media';
+import { fileToDataUrl, saveFile } from '../../lib/media';
 import { can, roleIn } from '../../lib/perms';
 import { groupBySlug, uid, useMe, useStore } from '../../lib/store';
 import type { BlockType, Campaign, CampaignBlock, DB, Group } from '../../lib/types';
@@ -421,8 +421,11 @@ export function CampaignEditor() {
   };
   const copyHtml = async () => {
     if (await copyText(html)) toast({ text: 'Email HTML copied', tone: 'good' });
-    else if (downloadText(`${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'campaign'}.html`, html, 'text/html')) toast({ text: 'Saved the HTML file', tone: 'good' });
-    else toast({ text: 'Copying is blocked in this preview.', tone: 'error' });
+    else {
+      const r = await saveFile(`${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'campaign'}.html`, html, 'text/html');
+      if (r === 'saved') toast({ text: 'Saved the HTML file', tone: 'good' });
+      else if (r === 'unavailable') toast({ text: 'Copying is blocked in this preview.', tone: 'error' });
+    }
   };
   const when = c.status === 'scheduled' && c.scheduledAt ? fmtTime(c.scheduledAt) : c.sentAt ? fmtDay(c.sentAt) : 'Now';
 

@@ -1,5 +1,5 @@
 import { googleCalendarUrl, icsFile, outlookCalendarUrl } from '../lib/calendar';
-import { downloadText } from '../lib/media';
+import { saveFile } from '../lib/media';
 import { useStore } from '../lib/store';
 import type { LawnEvent } from '../lib/types';
 
@@ -14,7 +14,7 @@ export function AddToCalendar({ ev }: { ev: LawnEvent }) {
         <a className="btn cream small" href={outlookCalendarUrl(ev)} target="_blank" rel="noreferrer">Outlook</a>
         <button
           className="btn cream small"
-          onClick={() => { if (!downloadText(`${slug}.ics`, icsFile(ev), 'text/calendar')) toast({ text: 'Downloads are blocked here. Use Google or Outlook.', tone: 'info' }); }}
+          onClick={async () => { if ((await saveFile(`${slug}.ics`, icsFile(ev), 'text/calendar')) === 'unavailable') toast({ text: "Calendar files can't be saved from this preview. Use Google or Outlook.", tone: 'info' }); }}
         >
           Apple
         </button>
