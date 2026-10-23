@@ -17,6 +17,7 @@ export function EventCard({ ev, compact = false, note }: { ev: LawnEvent; compac
   const dark = fg === C.cream;
   const d = dateParts(ev.startsAt);
   const when = whenLabel(ev);
+  const group = db.groups.find((g) => g.id === ev.groupId);
 
   return (
     <Tilt>
@@ -47,7 +48,7 @@ export function EventCard({ ev, compact = false, note }: { ev: LawnEvent; compac
           <h3 className={`display ${compact ? 'h3' : 'h2'} ${dark ? 'outlined' : ''}`} style={{ color: dark ? undefined : C.pine }}>
             {ev.title}
           </h3>
-          <p className="small strong" style={{ color: fg, opacity: 0.92 }}>{ev.venue}</p>
+          <p className="small strong" style={{ color: fg, opacity: 0.92 }}>{ev.venue}{group && group.id !== 'otl' ? `, by ${group.name}` : ''}</p>
           {note && <p className="small strong" style={{ color: fg }}>{note}</p>}
           <div className="row" style={{ gap: 10, marginTop: 2 }}>
             <div className="avatar-stack">
@@ -58,7 +59,7 @@ export function EventCard({ ev, compact = false, note }: { ev: LawnEvent; compac
             </div>
             <span className="small strong" style={{ color: fg }}>
               {people.length} {people.length === 1 ? 'person' : 'people'}
-              {seeds.length > 0 && `, ${seeds.length} seeds`}
+              {seeds.length > 0 && `, ${seeds.length} ${seeds.length === 1 ? "seed" : "seeds"}`}
               {blooms > 0 && `, ${blooms} in bloom`}
             </span>
           </div>

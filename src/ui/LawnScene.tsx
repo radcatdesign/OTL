@@ -15,7 +15,8 @@ export function LawnScene({ members, users, seeds, hostId, meId, onPick, onGarde
   onGarden: () => void;
   gardenOpen: boolean;
 }) {
-  const shown = members.filter((m) => m.status !== 'invited').sort((a, b) => a.spot.y - b.spot.y);
+  const visible = members.filter((m) => m.status !== 'invited');
+  const shown = visible.slice(0, 24).sort((a, b) => a.spot.y - b.spot.y);
   const blooms = seeds.filter((s) => s.bloomedAt).slice(-3);
   return (
     <div
@@ -90,6 +91,9 @@ export function LawnScene({ members, users, seeds, hostId, meId, onPick, onGarde
           </div>
         );
       })}
+      {visible.length > 24 && (
+        <span className="pill" style={{ position: 'absolute', left: 12, top: 12, zIndex: 300 }}>+{visible.length - 24} more on the lawn</span>
+      )}
     </div>
   );
 }

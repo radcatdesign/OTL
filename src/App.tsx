@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { HashRouter, MemoryRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
-import { useMe } from './lib/store';
+import { useMe, useStore } from './lib/store';
 import { useWide } from './lib/useWide';
 import { Explore } from './screens/Explore';
 import { Garden } from './screens/Garden';
@@ -10,7 +10,11 @@ import { InviteLanding } from './screens/InviteLanding';
 import { Join } from './screens/Join';
 import { Lawn } from './screens/Lawn';
 import { Me } from './screens/Me';
-import { NewLawn } from './screens/NewLawn';
+import { EventEditor } from './screens/EventEditor';
+import { GroupPage } from './screens/GroupPage';
+import { Groups } from './screens/Groups';
+import { Admin } from './screens/admin/Admin';
+import { CampaignEditor } from './screens/admin/CampaignEditor';
 import { Studio } from './screens/Studio';
 import { Welcome } from './screens/Welcome';
 import { BottomNav, TopBar } from './ui/Chrome';
@@ -65,10 +69,22 @@ function OpenShell() {
   return <Frame bare><Outlet /></Frame>;
 }
 
+// Scheduled campaigns go out when their time comes. Live, a server job does this.
+function CampaignClock() {
+  const process = useStore((s) => s.processScheduled);
+  useEffect(() => {
+    process();
+    const t = setInterval(process, 20_000);
+    return () => clearInterval(t);
+  }, [process]);
+  return null;
+}
+
 function AppRoutes() {
   return (
     <>
       <ScrollToTop />
+      <CampaignClock />
       <World />
       <Routes>
         <Route path="/" element={<Root />} />
@@ -79,11 +95,17 @@ function AppRoutes() {
         <Route element={<SignedIn />}>
           <Route path="/explore" element={<Explore />} />
           <Route path="/gardens" element={<Gardens />} />
-          <Route path="/new" element={<NewLawn />} />
+          <Route path="/new" element={<EventEditor />} />
+          <Route path="/lawn/:id/edit" element={<EventEditor />} />
           <Route path="/lawn/:id" element={<Lawn />} />
           <Route path="/lawn/:id/garden" element={<Garden />} />
           <Route path="/me" element={<Me />} />
           <Route path="/studio" element={<Studio />} />
+          <Route path="/groups" element={<Groups />} />
+          <Route path="/g/:slug" element={<GroupPage />} />
+          <Route path="/g/:slug/admin" element={<Admin />} />
+          <Route path="/g/:slug/admin/campaigns/:cid" element={<CampaignEditor />} />
+          <Route path="/g/:slug/admin/:tab" element={<Admin />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

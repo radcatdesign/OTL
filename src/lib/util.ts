@@ -11,7 +11,25 @@ export function stageOf(seed: Seed, waterCount: number): Stage {
 export const wateringsFor = (db: DB, seedId: string) =>
   db.waterings.filter((w) => w.seedId === seedId).sort((a, b) => a.createdAt - b.createdAt);
 
-const TZ = 'America/Los_Angeles';
+export const TZ = 'America/Los_Angeles';
+export const TZ_LABEL = 'Pacific time';
+
+// Wall-clock day and time of a timestamp in the community's time zone.
+export function zoned(t: number) {
+  const p: Record<string, string> = {};
+  new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .formatToParts(t).forEach((x) => { p[x.type] = x.value; });
+  return { day: `${p.year}-${p.month}-${p.day}`, time: `${p.hour}:${p.minute}` };
+}
+
+// Timestamp for a wall-clock day ("2026-10-24") and time ("09:00") in the community's time zone.
+export function fromZoned(day: string, time: string) {
+  const guess = Date.parse(`${day}T${time}:00Z`);
+  if (Number.isNaN(guess)) return NaN;
+  const offset = (t: number) => { const z = zoned(t); return Date.parse(`${z.day}T${z.time}:00Z`) - t; };
+  const first = guess - offset(guess);
+  return guess - offset(first);
+}
 
 export function fmtDay(t: number) {
   return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: TZ }).format(t);

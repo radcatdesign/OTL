@@ -48,14 +48,14 @@ export function BottomNav() {
   return (
     <nav className="nav" aria-label="Main">
       <div className="nav-inner">
-        {tab('/', 'Lawns', 'picnicTable', (p) => p === '/' || p.startsWith('/lawn/') && !p.endsWith('/garden'))}
+        {tab('/', 'Lawns', 'picnicTable', (p) => p === '/' || p === '/explore' || (p.startsWith('/lawn/') && !p.endsWith('/garden')))}
         {tab('/gardens', 'Gardens', 'tulip', (p) => p === '/gardens' || p.endsWith('/garden'))}
         <Link to="/new" className="plant-btn" aria-label="Host a lawn">
           <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden>
             <path d="M14 4V24M4 14H24" stroke="#16541A" strokeWidth="5" strokeLinecap="round" />
           </svg>
         </Link>
-        {tab('/explore', 'Explore', 'location')}
+        {tab('/groups', 'Groups', 'trees', (p) => p === '/groups' || p.startsWith('/g/'))}
         {tab('/me', 'Me', 'sunHat', (p) => p === '/me' || p === '/studio')}
       </div>
     </nav>

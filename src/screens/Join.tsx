@@ -158,7 +158,15 @@ export function Join() {
                 style={{ fontSize: '1.2rem', minHeight: 60 }}
                 onClick={() => {
                   signUp({ name, email, role: role ?? 'Other', intents, otis: look, bio });
-                  celebrate({ kind: 'welcome', title: `Welcome, ${name.split(' ')[0]}`, body: 'Join a lawn, check in, and plant your first seed.' });
+                  const st = useStore.getState();
+                  const otl = st.demo ? st.db.groupMembers.find((m) => m.groupId === 'otl' && m.userId === st.me && m.role === 'cohost') : undefined;
+                  celebrate({
+                    kind: 'welcome',
+                    title: `Welcome, ${name.split(' ')[0]}`,
+                    body: otl
+                      ? "For this demo you're a co-host of On The Lawn, so the admin tools are open. Find them under Groups."
+                      : 'Join a lawn, check in, and plant your first seed.',
+                  });
                   nav(next, { replace: true });
                 }}
               >
