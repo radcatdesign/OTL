@@ -135,7 +135,7 @@ export function renderEmailHtml(campaign: Campaign, group: Group, db: DB, appUrl
 <tr><td style="height:26px"></td></tr>
 <tr><td style="padding:0 32px 10px;font-size:15px;color:${C.pine};font-weight:700">Hi ${h(recipientName)},</td></tr>
 ${blocks}
-<tr><td style="padding:10px 32px 26px;font-size:12px;line-height:1.5;color:#4a7a4c">You're getting this because you joined ${h(group.name)} on On The Lawn.<br>Replies go to ${h(group.replyTo)}.<br><a href="${h(appUrl)}" style="color:#4a7a4c">Unsubscribe</a></td></tr>
+<tr><td style="padding:10px 32px 26px;font-size:12px;line-height:1.5;color:#4a7a4c">You're getting this because you joined ${h(group.name)}${/^on the lawn$/i.test(group.name.trim()) ? '' : ' on On The Lawn'}.<br>Replies go to ${h(group.replyTo)}.<br><a href="${h(appUrl)}" style="color:#4a7a4c">Unsubscribe</a></td></tr>
 </table></td></tr></table></body></html>`;
 }
 
