@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '../brand/icons';
 import { OtisAvatar } from '../brand/otis/Otis';
@@ -13,6 +13,12 @@ import { PersonSheet } from '../ui/PersonSheet';
 import { Sheet } from '../ui/Sheet';
 import { Tilt } from '../ui/Tilt';
 import { useWide } from '../lib/useWide';
+import { Tabs } from '../ui/Bits';
+import { GardenWalk, type GardenWalkHandle } from '../ui/GardenWalk';
+
+type View = 'walk' | 'list';
+const VIEW_KEY = 'otl-garden-view';
+const readView = (): View => { try { return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'walk'; } catch { return 'walk'; } };
 
 export function Garden() {
   const { id } = useParams();
@@ -24,7 +30,10 @@ export function Garden() {
   const [planting, setPlanting] = useState(false);
   const [openSeed, setOpenSeed] = useState<string | null>(null);
   const [person, setPerson] = useState<string | null>(null);
+  const [view, setViewState] = useState<View>(readView);
+  const walk = useRef<GardenWalkHandle>(null);
   const wide = useWide();
+  const setView = (v: View) => { setViewState(v); try { localStorage.setItem(VIEW_KEY, v); } catch { /* private mode */ } };
 
   if (!ev) {
     return (
@@ -60,10 +69,11 @@ export function Garden() {
   const news = db.activity.filter((a) => a.eventId === ev.id && ['planted', 'watered', 'bloomed', 'checked_in'].includes(a.kind)).sort((a, b) => b.createdAt - a.createdAt).slice(0, 8);
 
   const topC = <>
-      <div className="row">
+      <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}>
         <button className="btn cream small" onClick={() => nav(`/lawn/${ev.id}`)}>Lawn</button>
         <span className="grow" />
-        <button className="btn sun small" onClick={() => setPlanting(true)}><Icon name="plant" size={24} /> Plant a seed</button>
+        <Tabs<View> label="Garden view" value={view} onChange={setView} items={[{ key: 'walk', label: 'Walk around' }, { key: 'list', label: 'List' }]} />
+        {view === 'list' && <button className="btn sun small" onClick={() => setPlanting(true)}><Icon name="plant" size={24} /> Plant a seed</button>}
       </div>
 
     </>;
@@ -116,18 +126,8 @@ export function Garden() {
       )}
     </>;
 
-  return (
-    <>
-      {topC}
-      {wide ? (
-        <div className="cols">
-          <div className="col">
-            {headerC}
-            {filtersC}
-            {plotsC}
-          </div>
-          <aside className="rail">
-            <section className="card stack" aria-labelledby="how-it-grows">
+  const howC = (
+    <section className="card stack" aria-labelledby="how-it-grows">
       <h2 id="how-it-grows" className="display h3">How seeds grow</h2>
       <div className="list">
         {([
@@ -146,6 +146,58 @@ export function Garden() {
         ))}
       </div>
     </section>
+  );
+
+  const sheets = (
+    <>
+      <PlantSheet
+        eventId={ev.id}
+        open={planting}
+        onClose={() => setPlanting(false)}
+        onPlanted={(sid) => { setPlanting(false); setTimeout(() => setOpenSeed(sid), 250); }}
+        onPlant={view === 'walk' ? (p) => { setPlanting(false); setTimeout(() => walk.current?.plant(p), 260); } : undefined}
+      />
+      <SeedSheet
+        seedId={openSeed}
+        onClose={() => setOpenSeed(null)}
+        onPerson={setPerson}
+        onWater={view === 'walk' ? (sid, msg) => { setOpenSeed(null); setTimeout(() => walk.current?.water(sid, msg), 260); } : undefined}
+      />
+      <PersonSheet userId={person} onClose={() => setPerson(null)} />
+    </>
+  );
+
+  if (view === 'walk') {
+    return (
+      <>
+        {topC}
+        <h1 className="display h3" style={{ marginTop: -4 }}>{ev.title} garden</h1>
+        <GardenWalk
+          ref={walk}
+          ev={ev}
+          paused={planting || !!openSeed || !!person}
+          onOpenSeed={setOpenSeed}
+          onPerson={setPerson}
+          onPlantHere={() => setPlanting(true)}
+        />
+        {wide ? <div className="cols even">{howC}{newsCard}</div> : <>{newsCard}{howC}</>}
+        {sheets}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {topC}
+      {wide ? (
+        <div className="cols">
+          <div className="col">
+            {headerC}
+            {filtersC}
+            {plotsC}
+          </div>
+          <aside className="rail">
+            {howC}
             {newsCard}
           </aside>
         </div>
@@ -158,9 +210,7 @@ export function Garden() {
         </>
       )}
 
-      <PlantSheet eventId={ev.id} open={planting} onClose={() => setPlanting(false)} onPlanted={(sid) => { setPlanting(false); setTimeout(() => setOpenSeed(sid), 250); }} />
-      <SeedSheet seedId={openSeed} onClose={() => setOpenSeed(null)} onPerson={setPerson} />
-      <PersonSheet userId={person} onClose={() => setPerson(null)} />
+      {sheets}
     </>
   );
 }
@@ -247,7 +297,10 @@ function NewsRow({ a, db, meId, onSeed }: { a: Activity; db: DB; meId: string; o
   );
 }
 
-function PlantSheet({ eventId, open, onClose, onPlanted }: { eventId: string; open: boolean; onClose: () => void; onPlanted: (seedId: string) => void }) {
+function PlantSheet({ eventId, open, onClose, onPlanted, onPlant }: {
+  eventId: string; open: boolean; onClose: () => void; onPlanted: (seedId: string) => void;
+  onPlant?: (p: { intent: SeedIntent; title: string; details: string; link?: string }) => void;
+}) {
   const plantSeed = useStore((s) => s.plantSeed);
   const [intent, setIntent] = useState<SeedIntent | null>(null);
   const [title, setTitle] = useState('');
@@ -266,6 +319,11 @@ function PlantSheet({ eventId, open, onClose, onPlanted }: { eventId: string; op
           e.preventDefault();
           if (!intent) return setErr('Pick what kind of seed this is.');
           if (title.trim().length < 4) return setErr('Say what you are looking for in a few words.');
+          if (onPlant) {
+            onPlant({ intent, title, details, link });
+            reset();
+            return;
+          }
           const s = plantSeed(eventId, { intent, title, details, link });
           reset();
           onPlanted(s.id);
@@ -274,7 +332,7 @@ function PlantSheet({ eventId, open, onClose, onPlanted }: { eventId: string; op
         <div className="row" style={{ alignItems: 'flex-end' }}>
           <div className="grow stack" style={{ gap: 4 }}>
             <h2 className="display h2">Plant a seed</h2>
-            <p className="muted strong">What are you looking for?</p>
+            <p className="muted strong">{onPlant ? 'It goes in the ground right where your Otis is standing.' : 'What are you looking for?'}</p>
           </div>
           <AnimatePresence mode="wait">
             <motion.div key={intent ?? 'none'} initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 14 }}>
@@ -316,13 +374,15 @@ function PlantSheet({ eventId, open, onClose, onPlanted }: { eventId: string; op
           <span className="hint">Optional. A portfolio, deck, or shop.</span>
         </div>
         {err && <p className="error" role="alert">{err}</p>}
-        <button className="btn sun block" type="submit" style={{ minHeight: 58, fontSize: '1.15rem' }}>Plant it</button>
+        <button className="btn sun block" type="submit" style={{ minHeight: 58, fontSize: '1.15rem' }}>{onPlant ? 'Plant it here' : 'Plant it'}</button>
       </form>
     </Sheet>
   );
 }
 
-function SeedSheet({ seedId, onClose, onPerson }: { seedId: string | null; onClose: () => void; onPerson: (id: string) => void }) {
+function SeedSheet({ seedId, onClose, onPerson, onWater }: {
+  seedId: string | null; onClose: () => void; onPerson: (id: string) => void; onWater?: (seedId: string, message: string) => void;
+}) {
   const me = useMe()!;
   const db = useStore((s) => s.db);
   const waterSeed = useStore((s) => s.waterSeed);
@@ -345,6 +405,11 @@ function SeedSheet({ seedId, onClose, onPerson }: { seedId: string | null; onClo
   const water = (e: React.FormEvent) => {
     e.preventDefault();
     if (!msg.trim()) return;
+    if (onWater) {
+      onWater(seed.id, msg);
+      setMsg('');
+      return;
+    }
     setPouring(true);
     setTimeout(() => {
       waterSeed(seed.id, msg);

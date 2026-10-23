@@ -98,7 +98,7 @@ interface State {
   deletePhoto: (photoId: Id) => void;
   toggleLike: (photoId: Id) => void;
   // garden
-  plantSeed: (eventId: Id, p: { intent: SeedIntent; title: string; details: string; link?: string }) => Seed;
+  plantSeed: (eventId: Id, p: { intent: SeedIntent; title: string; details: string; link?: string; spot?: { x: number; y: number } }) => Seed;
   waterSeed: (seedId: Id, message: string, as?: Id) => void;
   bloomSeed: (seedId: Id, partnerIds: Id[]) => void;
   // email list
@@ -521,7 +521,7 @@ export const useStore = create<State>()(
         // ---------- garden ----------
         plantSeed: (eventId, p) => {
           const me = get().me!;
-          const seed: Seed = { id: uid('s'), eventId, userId: me, intent: p.intent, title: p.title.trim(), details: p.details.trim(), link: p.link?.trim() || undefined, createdAt: Date.now(), partners: [] };
+          const seed: Seed = { id: uid('s'), eventId, userId: me, intent: p.intent, title: p.title.trim(), details: p.details.trim(), link: p.link?.trim() || undefined, createdAt: Date.now(), partners: [], spot: p.spot };
           progress('Seed planted', (db) => log({ ...db, seeds: [...db.seeds, seed] }, { eventId, userId: me, kind: 'planted', seedId: seed.id }));
           if (get().demo) {
             setTimeout(() => {

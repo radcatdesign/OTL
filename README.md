@@ -51,6 +51,7 @@ One app, two layouts. Under 1024px it's the phone layout: top bar, bottom tabs, 
 
 ## Added beyond the brief
 
+- **Walk the garden.** Each garden is a little world bigger than the screen. Steer your Otis with the arrow keys or WASD, or tap anywhere to walk there. Plant a seed right where you're standing, walk up to someone's seed to water it (the can comes out and the plant grows on the spot), and use the minimap to get around. Neighbors wander, say hi when you pass, and walk over to water your seeds. A plain list view is one tap away.
 - **Each event is a literal lawn.** Everyone's Otis stands on the event's lawn scene. Tap one to see their card.
 - **Gate code check-in.** Hosts get a code and a "Show on screen" mode with the code and a join QR for the welcome table. The garden only opens for people who were there.
 - **Profile card mirrors the printed OTL cards.** Front and back, including the checker border and the six colored intentions.

@@ -205,6 +205,7 @@ export interface Seed {
   createdAt: number;
   bloomedAt?: number;
   partners: Id[]; // who it bloomed with
+  spot?: { x: number; y: number }; // where it sits in the walkable garden, as fractions of the plot
 }
 
 export interface Watering {

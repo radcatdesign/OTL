@@ -162,7 +162,9 @@ create table if not exists public.seeds (
   link text,
   created_at timestamptz not null default now(),
   bloomed_at timestamptz,
-  partners uuid[] not null default '{}'
+  partners uuid[] not null default '{}',
+  spot_x real check (spot_x between 0 and 1),   -- where it sits in the walkable garden
+  spot_y real check (spot_y between 0 and 1)
 );
 
 create table if not exists public.waterings (
