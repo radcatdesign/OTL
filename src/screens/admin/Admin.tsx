@@ -1,5 +1,5 @@
+import { Lock } from 'lucide-react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { C } from '../../brand/palette';
 import { ABILITIES, can, isStaffRole, roleIn, ROLE_INFO, type Ability } from '../../lib/perms';
 import { groupBySlug, useMe, useStore } from '../../lib/store';
 import type { Group, GroupRole } from '../../lib/types';
@@ -34,8 +34,9 @@ export function DemoRoleSwitch({ group }: { group: Group }) {
   const role = roleIn(db, group.id, me.id);
   if (!demo || role === 'host') return null;
   return (
-    <label className="row panel" style={{ gap: 8, padding: '6px 10px', background: C.cream, borderStyle: 'dashed' }}>
-      <span className="small strong">Demo: try this as</span>
+    <label className="row" style={{ gap: 8 }}>
+      <span className="demo-pill">Demo</span>
+      <span className="small muted">View as</span>
       <select className="input select small" style={{ width: 'auto' }} value={role ?? 'none'} onChange={(e) => setMyRole(group.id, e.target.value as GroupRole)} aria-label="Try another role">
         {(['cohost', 'moderator', 'member'] as GroupRole[]).map((r) => <option key={r} value={r}>{ROLE_INFO[r].name}</option>)}
         {!role && <option value="none" disabled>Not a member</option>}
@@ -85,7 +86,7 @@ export function Admin() {
       )}
 
       <div className="admin-tabs">
-        <div className="row" role="tablist" aria-label="Admin sections" style={{ overflowX: 'auto', gap: 8, paddingBottom: 6, marginInline: -4, paddingInline: 4 }}>
+        <div className="tabbar" role="tablist" aria-label="Admin sections">
           {TABS.map((x) => {
             const ok = x.need ? can(role, x.need) : true;
             return (
@@ -93,17 +94,15 @@ export function Admin() {
                 key={x.key}
                 role="tab"
                 aria-selected={current === x.key}
-                aria-pressed={current === x.key}
-                className="chip"
-                style={{ whiteSpace: 'nowrap', opacity: ok ? 1 : 0.55 }}
+                style={{ opacity: ok ? 1 : 0.55 }}
                 onClick={() => nav(`/g/${group.slug}/admin/${x.key}`)}
                 title={ok ? undefined : `${ABILITIES[x.need!].label}: ${ABILITIES[x.need!].roles.map((r) => ROLE_INFO[r].name).join(', ')}`}
               >
                 {!ok && (
-                  <svg width="14" height="14" viewBox="0 0 26 26" aria-label="Locked"><rect x="4" y="11" width="18" height="13" rx="4" fill="none" stroke={C.pine} strokeWidth="3" /><path d="M8 11V8a5 5 0 0 1 10 0v3" stroke={C.pine} strokeWidth="3" fill="none" /></svg>
+                  <Lock size={13} strokeWidth={2.2} aria-label="Locked" />
                 )}
                 {x.label}
-                {x.key === 'inbox' && inbox > 0 && <span className="pill sun" style={{ padding: '0 7px', fontSize: 11 }}>{inbox}</span>}
+                {x.key === 'inbox' && inbox > 0 && <span className="pill sun">{inbox}</span>}
               </button>
             );
           })}

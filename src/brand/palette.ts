@@ -30,4 +30,11 @@ export const COLOR_NAMES: Record<ColorKey, string> = {
 export const hex = (k: ColorKey) => C[k];
 
 // Text color that reads on top of each card color.
+// A soft tinted badge for list and category colors in the clean platform UI.
+export const tint = (k: ColorKey, amount = 18) => ({
+  background: `color-mix(in srgb, ${C[k]} ${amount}%, white)`,
+  borderColor: `color-mix(in srgb, ${C[k]} 45%, white)`,
+  color: 'var(--ink)',
+});
+
 export const onColor = (k: ColorKey) => (k === 'sun' || k === 'lawn' ? C.pine : C.cream);

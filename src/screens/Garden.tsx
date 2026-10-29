@@ -169,7 +169,7 @@ export function Garden() {
 
   if (view === 'walk') {
     return (
-      <>
+      <div className="art stack-lg">
         {topC}
         <h1 className="display h3" style={{ marginTop: -4 }}>{ev.title} garden</h1>
         <GardenWalk
@@ -182,12 +182,12 @@ export function Garden() {
         />
         {wide ? <div className="cols even">{howC}{newsCard}</div> : <>{newsCard}{howC}</>}
         {sheets}
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="art stack-lg">
       {topC}
       {wide ? (
         <div className="cols">
@@ -211,7 +211,7 @@ export function Garden() {
       )}
 
       {sheets}
-    </>
+    </div>
   );
 }
 
@@ -312,7 +312,7 @@ function PlantSheet({ eventId, open, onClose, onPlanted, onPlant }: {
   const reset = () => { setIntent(null); setTitle(''); setDetails(''); setLink(''); setErr(''); };
 
   return (
-    <Sheet open={open} onClose={() => { onClose(); }} label="Plant a seed">
+    <Sheet art open={open} onClose={() => { onClose(); }} label="Plant a seed">
       <form
         className="stack-lg"
         onSubmit={(e) => {
@@ -393,7 +393,7 @@ function SeedSheet({ seedId, onClose, onPerson, onWater }: {
   const seed = seedId ? db.seeds.find((s) => s.id === seedId) : undefined;
   const ws = useMemo(() => (seed ? wateringsFor(db, seed.id) : []), [db, seed]);
 
-  if (!seed) return <Sheet open={false} onClose={onClose} label="Seed">{null}</Sheet>;
+  if (!seed) return <Sheet art open={false} onClose={onClose} label="Seed">{null}</Sheet>;
 
   const info = SEED_INTENT[seed.intent];
   const stage = stageOf(seed, ws.length);
@@ -419,7 +419,7 @@ function SeedSheet({ seedId, onClose, onPerson, onWater }: {
   };
 
   return (
-    <Sheet open={!!seed} onClose={() => { setPicked([]); onClose(); }} label={seed.title}>
+    <Sheet art open={!!seed} onClose={() => { setPicked([]); onClose(); }} label={seed.title}>
       <div className="stack-lg">
         <div style={{ position: 'relative', display: 'grid', placeItems: 'center', background: `linear-gradient(180deg, #cfe7fd 0 64%, ${C.lawn} 64%)`, border: `3px solid ${C.pine}`, borderRadius: 24, paddingTop: 12, overflow: 'hidden' }}>
           <motion.div key={stage} initial={{ scale: 0.6, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 11 }} style={{ width: 150, marginBottom: -4 }}>

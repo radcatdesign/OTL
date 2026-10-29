@@ -71,7 +71,7 @@ export function PhotoWall({ ev, onRsvp }: { ev: LawnEvent; onRsvp: () => void })
               <div className="grid-3">
                 {drafts.map((d, i) => (
                   <div key={i} className="stack" style={{ gap: 6 }}>
-                    <img src={d.src} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 12, border: `2.5px solid ${C.pine}` }} />
+                    <img src={d.src} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border)' }} />
                     <input className="input" style={{ minHeight: 40, fontSize: '0.9rem', padding: '6px 10px' }} placeholder="Caption" aria-label={`Caption for photo ${i + 1}`} value={d.caption} maxLength={140} onChange={(e) => setDrafts((xs) => xs.map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)))} />
                   </div>
                 ))}
@@ -109,7 +109,7 @@ export function PhotoWall({ ev, onRsvp }: { ev: LawnEvent; onRsvp: () => void })
           const liked = current.likes.includes(me.id);
           return (
             <div className="stack">
-              <img src={current.src} alt={current.caption} style={{ width: '100%', maxHeight: '62vh', objectFit: 'contain', borderRadius: 18, border: `3px solid ${C.pine}`, background: C.paper }} />
+              <img src={current.src} alt={current.caption} style={{ width: '100%', maxHeight: '62vh', objectFit: 'contain', borderRadius: 12, background: 'var(--surface-2)' }} />
               <div className="row">
                 {u && <OtisAvatar look={u.otis} size={36} />}
                 <div className="grow">

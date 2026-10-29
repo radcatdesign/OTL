@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { C, COLOR_KEYS, COLOR_NAMES, type ColorKey } from '../../brand/palette';
+import { C, COLOR_KEYS, COLOR_NAMES, tint, type ColorKey } from '../../brand/palette';
 import { parseCSV, rowsToContacts, toCSV, validEmail } from '../../lib/email';
 import { saveFile } from '../../lib/media';
 import { useStore } from '../../lib/store';
@@ -131,7 +131,7 @@ function AddSheet({ group, open, onClose }: { group: Group; open: boolean; onClo
             <div className="row-wrap">
               {lists.map((l) => {
                 const on = listIds.includes(l.id);
-                return <button type="button" key={l.id} className="chip" aria-pressed={on} style={{ ['--chip-on' as string]: C[l.color] }} onClick={() => setListIds((xs) => (on ? xs.filter((x) => x !== l.id) : [...xs, l.id]))}>{l.name}</button>;
+                return <button type="button" key={l.id} className="chip" aria-pressed={on} onClick={() => setListIds((xs) => (on ? xs.filter((x) => x !== l.id) : [...xs, l.id]))}>{l.name}</button>;
               })}
             </div>
           </div>
@@ -207,7 +207,7 @@ export function EmailList({ group }: { group: Group }) {
           <div className="row-wrap" role="group" aria-label="Filter by list">
             <button className="chip" aria-pressed={listFilter === 'all'} onClick={() => { setListFilter('all'); setSel([]); }}>Everyone <span style={{ opacity: 0.7 }}>{all.length}</span></button>
             {lists.map((l) => (
-              <button key={l.id} className="chip" aria-pressed={listFilter === l.id} style={{ ['--chip-on' as string]: C[l.color], color: listFilter === l.id && (l.color === 'forest' || l.color === 'tomato') ? C.cream : undefined }} onClick={() => { setListFilter(l.id); setSel([]); }}>
+              <button key={l.id} className="chip" aria-pressed={listFilter === l.id} onClick={() => { setListFilter(l.id); setSel([]); }}>
                 <span className="dot" style={{ background: C[l.color] }} />{l.name} <span style={{ opacity: 0.7 }}>{all.filter((c) => c.listIds.includes(l.id)).length}</span>
               </button>
             ))}
@@ -260,7 +260,7 @@ export function EmailList({ group }: { group: Group }) {
         </div>
 
         {sel.length > 0 && (
-          <div className="card row" style={{ gap: 8, flexWrap: 'wrap', padding: 12, background: C.sun, position: 'sticky', top: 8, zIndex: 5 }}>
+          <div className="card row callout" style={{ gap: 8, flexWrap: 'wrap', padding: 12, position: 'sticky', top: 8, zIndex: 5, boxShadow: 'var(--shadow-md)' }}>
             <span className="strong">{sel.length} selected</span>
             <select className="input select small" style={{ width: 'auto' }} value="" aria-label="Add selected to a list" onChange={(e) => { if (e.target.value) { addToList(sel, e.target.value); toast({ text: `Added to ${lists.find((l) => l.id === e.target.value)?.name}`, tone: 'good' }); } }}>
               <option value="">Add to list</option>
@@ -297,7 +297,7 @@ export function EmailList({ group }: { group: Group }) {
                   <tr key={c.id} className={sel.includes(c.id) ? 'sel' : ''}>
                     <td><input type="checkbox" className="check" aria-label={`Select ${c.email}`} checked={sel.includes(c.id)} onChange={() => toggle(c.id)} /></td>
                     <td><span className="strong" style={{ display: 'block' }}>{c.name || 'No name'}</span><span className="small muted">{c.email}</span></td>
-                    <td><div className="row-wrap" style={{ gap: 4 }}>{c.listIds.map((id) => { const l = lists.find((x) => x.id === id); return l ? <span key={id} className="pill" style={{ background: C[l.color], color: l.color === 'forest' || l.color === 'tomato' ? C.cream : C.pine, fontSize: 11, padding: '1px 8px' }}>{l.name}</span> : null; })}</div></td>
+                    <td><div className="row-wrap" style={{ gap: 4 }}>{c.listIds.map((id) => { const l = lists.find((x) => x.id === id); return l ? <span key={id} className="pill" style={tint(l.color)}>{l.name}</span> : null; })}</div></td>
                     <td><span className={`pill ${c.status === 'subscribed' ? 'lawn' : ''}`} style={{ fontSize: 11 }}>{c.status === 'subscribed' ? 'Subscribed' : 'Unsubscribed'}</span></td>
                     <td className="small">{SOURCE[c.source]}</td>
                     <td className="small">{fmtDay(c.createdAt)}</td>
@@ -317,7 +317,7 @@ export function EmailList({ group }: { group: Group }) {
                     <span className="small muted" style={{ display: 'block', overflowWrap: 'anywhere' }}>{c.email}</span>
                     <span className="row-wrap" style={{ gap: 4, marginTop: 4 }}>
                       {c.status === 'unsubscribed' && <span className="pill" style={{ fontSize: 11 }}>Unsubscribed</span>}
-                      {c.listIds.map((id) => { const l = lists.find((x) => x.id === id); return l ? <span key={id} className="pill" style={{ background: C[l.color], color: l.color === 'forest' || l.color === 'tomato' ? C.cream : C.pine, fontSize: 11, padding: '1px 8px' }}>{l.name}</span> : null; })}
+                      {c.listIds.map((id) => { const l = lists.find((x) => x.id === id); return l ? <span key={id} className="pill" style={tint(l.color)}>{l.name}</span> : null; })}
                     </span>
                   </span>
                 </label>

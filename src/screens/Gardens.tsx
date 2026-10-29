@@ -37,7 +37,7 @@ export function Gardens() {
           <Tilt key={ev.id}>
             <Link to={`/lawn/${ev.id}/garden`} className="card stack" style={{ textDecoration: 'none', padding: 0, overflow: 'hidden' }}>
               <span className="glare" />
-              <div style={{ background: `linear-gradient(180deg, ${C.cream} 0 62%, ${C.soil} 62%)`, borderBottom: `3px solid ${C.pine}`, display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 4, padding: '12px 12px 0', minHeight: 110 }}>
+              <div style={{ background: `linear-gradient(180deg, ${C.cream} 0 62%, ${C.soil} 62%)`, borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 4, padding: '12px 12px 0', minHeight: 110 }}>
                 {sample.length ? sample.map((s) => {
                   const info = SEED_INTENT[s.intent];
                   const n = wateringsFor(db, s.id).length;

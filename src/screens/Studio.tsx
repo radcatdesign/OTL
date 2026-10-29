@@ -17,7 +17,7 @@ export function Studio() {
   const changed = JSON.stringify(look) !== JSON.stringify(me.otis);
 
   return (
-    <>
+    <div className="art stack-lg">
       <div className="row">
         <button className="btn cream small" onClick={() => nav(-1)}>Back</button>
         <span className="grow" />
@@ -33,6 +33,6 @@ export function Studio() {
           {changed ? 'Save Otis' : 'No changes yet'}
         </button>
       </div>
-    </>
+    </div>
   );
 }

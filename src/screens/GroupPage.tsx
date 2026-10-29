@@ -50,7 +50,7 @@ export function GroupPage() {
   const crowd = members.slice(0, wide ? 7 : 5).map((m) => db.users.find((u) => u.id === m.userId)).filter(Boolean);
 
   const hero = (
-    <section className="card" style={{ padding: 0, overflow: 'hidden', background: C[group.color] }}>
+    <section className="art art-frame" style={{ background: C[group.color] }}>
       <div className="stack" style={{ padding: wide ? '28px 28px 0' : '20px 18px 0', gap: 8, color: fg }}>
         <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
           <span className="pill" style={{ background: C.cream }}>{group.city}</span>
@@ -88,7 +88,7 @@ export function GroupPage() {
       ) : staff ? (
         <div className="stack" style={{ gap: 8 }}>
           <Link to={`/g/${group.slug}/admin`} className="btn sun block" style={{ whiteSpace: 'nowrap' }}>
-            Run the group{inbox > 0 && <span className="pill" style={{ padding: '0 8px', fontSize: 12, background: C.cream }}>{inbox} to answer</span>}
+            Run the group{inbox > 0 && <span className="pill sun">{inbox} to answer</span>}
           </Link>
           {can(role, 'createEvents') && <Link to={`/new?group=${group.id}`} className="btn cream block">New lawn</Link>}
         </div>

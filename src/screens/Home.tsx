@@ -57,13 +57,13 @@ export function Home() {
     </>;
   const demoCard = <>
       {demo && flagship && !atFlagship && (
-        <section className="card stack" style={{ background: 'var(--sun)' }}>
+        <section className="card stack callout">
           <div className="row">
             <Icon name="picnicTable" size={44} />
-            <p className="strong grow">On The Lawn 2026 just happened. Its garden is full of seeds. Check in with gate code <span className="code" style={{ background: 'var(--cream)', border: '2px solid var(--pine)', borderRadius: 8, padding: '0 6px' }}>{flagship.gate}</span> to walk in.</p>
+            <p className="strong grow">On The Lawn 2026 just happened. Its garden is full of seeds. Check in with gate code <span className="code kbd-code">{flagship.gate}</span> to walk in.</p>
           </div>
-          <Link to={`/lawn/${flagship.id}`} className="btn cream block">Go to the lawn</Link>
-          <p className="small strong">Demo mode: in real life the host shows this code at the event.</p>
+          <Link to={`/lawn/${flagship.id}`} className="btn block">Go to the lawn</Link>
+          <p className="small muted">Demo mode: in real life the host shows this code at the event.</p>
         </section>
       )}
 

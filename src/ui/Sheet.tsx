@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-export function Sheet({ open, onClose, children, label }: { open: boolean; onClose: () => void; children: ReactNode; label: string }) {
+export function Sheet({ open, onClose, children, label, art = false }: { open: boolean; onClose: () => void; children: ReactNode; label: string; art?: boolean }) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -26,7 +26,7 @@ export function Sheet({ open, onClose, children, label }: { open: boolean; onClo
           onClick={onClose}
         >
           <motion.div
-            className="sheet"
+            className={`sheet${art ? ' art' : ''}`}
             role="dialog"
             aria-modal="true"
             aria-label={label}

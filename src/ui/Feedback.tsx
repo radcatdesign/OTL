@@ -22,8 +22,9 @@ export function Toasts() {
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             onClick={() => dismiss(t.id)}
-            style={t.tone === 'error' ? { background: C.tomato, color: C.cream } : undefined}
+            data-tone={t.tone}
           >
+            <span className="toast-dot" aria-hidden />
             <span>{t.text}</span>
             {t.xp ? (
               <motion.span className="xp-badge" initial={{ scale: 0.4, rotate: -12 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 600, damping: 14, delay: 0.1 }}>
@@ -85,7 +86,7 @@ export function Celebration() {
         >
           <PetalBurst />
           <motion.div
-            className="card stack center"
+            className="card stack center art"
             role="dialog"
             aria-modal="true"
             aria-label={c.title}

@@ -45,6 +45,15 @@ Co-hosts have the same power as the host, with one guardrail: co-hosts can't rem
 
 **Lawn pages** have the hero image, date, location, "Hosted by" (the group plus the hosts), details, a map, add to calendar (Google, Outlook, Apple), the guest list, event chat with replies, and a photo wall with captions, likes and a lightbox.
 
+## Two looks
+
+The platform and the community spaces look different on purpose.
+
+- **The platform is clean software.** Lawns, groups, the admin space, email, forms and settings sit on a calm off-white workspace: Inter, thin borders, soft shadows, line icons (lucide), one green for actions, and tinted badges for status. Event covers keep their illustrations, framed like photos.
+- **The community spaces are the art.** The walkable garden, the lawn scene, the group banner, Otis (studio and sign-up), the trading card, celebrations and the welcome page use the OTL illustration style: pine line art, cream cards, hard drops, Titan One and Baloo 2.
+
+In code, wrap any space in `.art` to opt into the illustrated style. `src/styles/global.css` holds the clean system; `src/styles/art.css` holds the `.art` overrides and the garden.
+
 ## Phone and desktop
 
 One app, two layouts. Under 1024px it's the phone layout: top bar, bottom tabs, one column. At 1024px and up it becomes a desktop web app: a sidebar with your Otis, level and a Host button, two-column pages with a sticky side rail (garden news and the growth guide in gardens, check-in and guest list on lawns), card grids for lawns and gardens, the Otis studio with the preview beside the controls, and the host form with a live preview card.
@@ -79,7 +88,7 @@ In demo mode you sign up as a co-host of On The Lawn so the admin space is open.
 
 ## How it's built
 
-React 18, TypeScript, Vite, Zustand, Framer Motion. Hash routing so it runs on any static host.
+React 18, TypeScript, Vite, Zustand, Framer Motion, lucide icons. Hash routing so it runs on any static host.
 
 ```
 src/

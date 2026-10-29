@@ -73,7 +73,7 @@ export function MapView({ geo, place, height = 220, approx = false }: { geo?: Ge
   const showTiles = !!t && !failed;
 
   return (
-    <div style={{ position: 'relative', height, borderRadius: 20, border: `3px solid ${C.pine}`, overflow: 'hidden', background: '#f3efd8' }}>
+    <div style={{ position: 'relative', height, borderRadius: 12, border: '1px solid var(--border)', overflow: 'hidden', background: '#f3efd8' }}>
       {showTiles ? (
         <div aria-hidden style={{ position: 'absolute', inset: 0, filter: 'saturate(0.75) sepia(0.12) hue-rotate(20deg)' }}>
           {tiles.map((tile) => (

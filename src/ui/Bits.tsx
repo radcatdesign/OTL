@@ -1,33 +1,24 @@
+import { Lock } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { C } from '../brand/palette';
 import { ROLE_INFO } from '../lib/perms';
 import type { GroupRole } from '../lib/types';
 
-const ROLE_STYLE: Record<GroupRole, { bg: string; fg: string }> = {
-  host: { bg: C.pine, fg: C.cream },
-  cohost: { bg: C.forest, fg: C.cream },
-  moderator: { bg: C.sky, fg: C.pine },
-  member: { bg: C.paper, fg: C.pine },
-};
+const ROLE_CLASS: Record<GroupRole, string> = { host: 'pine', cohost: 'lawn', moderator: 'sky', member: '' };
 
 export function RoleBadge({ role, short = false }: { role: GroupRole; short?: boolean }) {
-  const s = ROLE_STYLE[role];
-  return (
-    <span className="pill" style={{ background: s.bg, color: s.fg }}>
-      {short ? ROLE_INFO[role].short : ROLE_INFO[role].name}
-    </span>
-  );
+  return <span className={`pill ${ROLE_CLASS[role]}`}>{short ? ROLE_INFO[role].short : ROLE_INFO[role].name}</span>;
 }
 
+// Segmented control. In the community spaces it picks up the chunky chip look from art.css.
 export function Tabs<T extends string>({ value, onChange, items, label }: {
   value: T; onChange: (v: T) => void; items: { key: T; label: string; count?: number }[]; label: string;
 }) {
   return (
-    <div className="row" role="tablist" aria-label={label} style={{ overflowX: 'auto', gap: 8, paddingBottom: 6, marginInline: -4, paddingInline: 4 }}>
+    <div className="seg" role="tablist" aria-label={label}>
       {items.map((t) => (
-        <button key={t.key} role="tab" aria-selected={value === t.key} aria-pressed={value === t.key} className="chip" style={{ whiteSpace: 'nowrap' }} onClick={() => onChange(t.key)}>
+        <button key={t.key} type="button" role="tab" aria-selected={value === t.key} onClick={() => onChange(t.key)}>
           {t.label}
-          {typeof t.count === 'number' && <span style={{ fontVariantNumeric: 'tabular-nums', opacity: 0.7 }}>{t.count}</span>}
+          {typeof t.count === 'number' && <span className="count">{t.count}</span>}
         </button>
       ))}
     </div>
@@ -61,12 +52,9 @@ export function Empty({ icon, title, children }: { icon?: ReactNode; title: stri
 
 export function Locked({ text }: { text: string }) {
   return (
-    <div className="panel row" style={{ gap: 10, background: C.cream, borderStyle: 'dashed' }}>
-      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden style={{ flex: 'none' }}>
-        <rect x="4" y="11" width="18" height="13" rx="4" fill={C.cream} stroke={C.pine} strokeWidth="2.6" />
-        <path d="M8 11V8a5 5 0 0 1 10 0v3" stroke={C.pine} strokeWidth="2.6" fill="none" />
-      </svg>
-      <p className="small strong">{text}</p>
+    <div className="panel row" style={{ gap: 10, alignItems: 'flex-start' }}>
+      <Lock size={16} strokeWidth={2.2} aria-hidden style={{ flex: 'none', marginTop: 2, color: 'var(--ink-soft)' }} />
+      <p className="small" style={{ color: 'var(--ink-soft)' }}>{text}</p>
     </div>
   );
 }

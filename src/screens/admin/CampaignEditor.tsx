@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { C, COLOR_KEYS, COLOR_NAMES, onColor } from '../../brand/palette';
+import { C, COLOR_KEYS, COLOR_NAMES } from '../../brand/palette';
 import { audienceFor, emailBody, renderEmailHtml, validEmail } from '../../lib/email';
 import { fileToDataUrl, saveFile } from '../../lib/media';
 import { can, roleIn } from '../../lib/perms';
@@ -129,7 +129,7 @@ const OTHER_MAIL = [
 
 function Sender({ name, color, size }: { name: string; color: string; size: number }) {
   return (
-    <span aria-hidden style={{ width: size, height: size, flex: 'none', borderRadius: 999, background: color, border: `2px solid ${C.pine}`, display: 'grid', placeItems: 'center', fontFamily: 'var(--font-display)', fontSize: size * 0.42, color: C.pine }}>
+    <span aria-hidden style={{ width: size, height: size, flex: 'none', borderRadius: 999, background: color, boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.12)', display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: size * 0.42, color: C.pine }}>
       {name.trim()[0]?.toUpperCase() ?? '?'}
     </span>
   );
@@ -186,7 +186,7 @@ function InboxPreview({ c, device, when }: { c: Campaign; device: 'desktop' | 'p
 
 function MessagePreview({ c, group, html, device, toName }: { c: Campaign; group: Group; html: string; device: 'desktop' | 'phone'; toName: string }) {
   const head = (
-    <div style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '12px 16px', borderBottom: `1.5px solid ${C.paper}`, background: C.cream }}>
+    <div style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--ink)' }}>
       <Sender name={c.fromName || group.name} color={C[c.accent]} size={36} />
       <div style={{ minWidth: 0, flex: 1, lineHeight: 1.25 }}>
         <div style={{ fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.fromName || group.name}</div>
@@ -227,7 +227,7 @@ function BlockCard({ b, db, groupId, index, count, onChange, onMove, onRemove }:
   const events = db.events.filter((e) => e.groupId === groupId && (e.endsAt > Date.now() || e.id === b.eventId)).sort((a, z) => a.startsAt - z.startsAt);
   const ev = db.events.find((e) => e.id === b.eventId);
   return (
-    <div className="panel stack" style={{ gap: 10, background: C.cream }}>
+    <div className="panel stack" style={{ gap: 10, background: 'var(--surface)' }}>
       <div className="row" style={{ gap: 6 }}>
         <span className="pill" style={{ fontSize: 12 }}>{LABEL[b.type]}</span>
         <span className="grow" />
@@ -269,7 +269,7 @@ function BlockCard({ b, db, groupId, index, count, onChange, onMove, onRemove }:
       {b.type === 'image' && (
         <div className="stack" style={{ gap: 8 }}>
           {b.src ? (
-            <img src={b.src} alt={b.alt || ''} style={{ width: '100%', maxHeight: 220, objectFit: 'cover', borderRadius: 14, border: `3px solid ${C.pine}` }} />
+            <img src={b.src} alt={b.alt || ''} style={{ width: '100%', maxHeight: 220, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border)' }} />
           ) : (
             <p className="small strong muted">No image yet. It won't show in the email until you add one.</p>
           )}
@@ -531,7 +531,7 @@ export function CampaignEditor() {
             const on = c.audience.listIds.includes(l.id);
             const n = audienceFor(db, group.id, { all: false, listIds: [l.id] }).length;
             return (
-              <button type="button" key={l.id} className="chip" aria-pressed={on} style={{ ['--chip-on' as string]: C[l.color], color: on ? onColor(l.color) : undefined }} onClick={() => set({ audience: { all: false, listIds: on ? c.audience.listIds.filter((x) => x !== l.id) : [...c.audience.listIds, l.id] } })}>
+              <button type="button" key={l.id} className="chip" aria-pressed={on} onClick={() => set({ audience: { all: false, listIds: on ? c.audience.listIds.filter((x) => x !== l.id) : [...c.audience.listIds, l.id] } })}>
                 <span className="dot" style={{ background: C[l.color] }} />{l.name} <span style={{ opacity: 0.75 }}>{n}</span>
               </button>
             );
@@ -635,7 +635,7 @@ export function CampaignEditor() {
   );
 
   const banner = c.status === 'scheduled' && c.scheduledAt ? (
-    <div className="card row" style={{ gap: 10, flexWrap: 'wrap', background: C.sun }}>
+    <div className="card row callout" style={{ gap: 10, flexWrap: 'wrap', padding: '12px 16px' }}>
       <p className="strong grow" style={{ minWidth: 220 }}>Goes out {fmtLongDay(c.scheduledAt)} at {fmtTime(c.scheduledAt)} {TZ_LABEL} to {recipients.length} {recipients.length === 1 ? 'person' : 'people'}. Edits save to it until then.</p>
       <button className="btn cream small" onClick={() => unschedule(c.id)}>Move back to drafts</button>
     </div>

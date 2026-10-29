@@ -94,13 +94,13 @@ const Art = memo(function Art({ art }: { art: CoverArt }) {
   }
 });
 
-export function Cover({ cover, ratio = '2 / 1', radius = 24, style, label }: { cover: CoverT; ratio?: string; radius?: number; style?: CSSProperties; label?: string }) {
+export function Cover({ cover, ratio = '2 / 1', radius = 14, style, label, framed = false }: { cover: CoverT; ratio?: string; radius?: number; style?: CSSProperties; label?: string; framed?: boolean }) {
   return (
     <div
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
-      style={{ position: 'relative', aspectRatio: ratio, maxWidth: '100%', borderRadius: radius, border: `3px solid ${C.pine}`, overflow: 'hidden', background: C.cream, ...style }}
+      style={{ position: 'relative', aspectRatio: ratio, maxWidth: '100%', borderRadius: radius, border: framed ? `3px solid ${C.pine}` : '1px solid var(--border)', overflow: 'hidden', background: C.cream, ...style }}
     >
       {cover.kind === 'photo' ? (
         <img src={cover.src} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -1,3 +1,4 @@
+import { MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -8,7 +9,7 @@ import { can, isStaffRole, roleIn } from '../lib/perms';
 import { canEnterGarden, groupById, membershipOf, userById, useMe, useStore } from '../lib/store';
 import type { User } from '../lib/types';
 import { useWide } from '../lib/useWide';
-import { fmtLongDay, fmtRange, isPast, whenLabel } from '../lib/util';
+import { dateParts, fmtLongDay, fmtRange, isPast, whenLabel } from '../lib/util';
 import { AddToCalendar } from '../ui/AddToCalendar';
 import { RoleBadge, Tabs } from '../ui/Bits';
 import { Cover } from '../ui/Cover';
@@ -104,15 +105,15 @@ export function Lawn() {
     </div>
   );
 
-  const heroC = <Cover cover={ev.cover} ratio={wide ? '2.3 / 1' : '16 / 10'} label={`${ev.title} cover`} style={{ boxShadow: 'var(--drop)' }} />;
+  const heroC = <Cover cover={ev.cover} ratio={wide ? '2.3 / 1' : '16 / 10'} label={`${ev.title} cover`} />;
 
   const titleC = (
     <section className="card stack" aria-labelledby="lawn-title" style={{ gap: 14 }}>
       <h1 id="lawn-title" className="display h1">{ev.title}</h1>
       <div className="row" style={{ alignItems: 'flex-start', gap: 12 }}>
-        <span className="date-tab" style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', minWidth: 58, padding: '6px 8px 4px', background: C[ev.color], border: `2.5px solid ${C.pine}`, borderRadius: 14, lineHeight: 1 }}>
-          <b style={{ fontFamily: 'var(--font-display)', fontWeight: 400, fontSize: '1.6rem' }}>{new Date(ev.startsAt).getDate()}</b>
-          <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>{new Date(ev.startsAt).toLocaleDateString('en-US', { month: 'short' })}</span>
+        <span className="date-block" aria-hidden>
+          <span>{dateParts(ev.startsAt).month}</span>
+          <b>{dateParts(ev.startsAt).day}</b>
         </span>
         <div className="stack" style={{ gap: 2 }}>
           <p className="strong" style={{ fontSize: '1.0625rem' }}>{fmtLongDay(ev.startsAt)}</p>
@@ -120,7 +121,7 @@ export function Lawn() {
         </div>
       </div>
       <div className="row" style={{ alignItems: 'flex-start', gap: 12 }}>
-        <Icon name="location" size={34} />
+        <span className="icon-tile" aria-hidden><MapPin size={18} strokeWidth={2} /></span>
         <div className="stack" style={{ gap: 2 }}>
           <p className="strong">{ev.venue}</p>
           {ev.address && <p className="small muted strong">{ev.address}</p>}
@@ -130,7 +131,8 @@ export function Lawn() {
         <p className="label">Hosted by</p>
         <div className="row-wrap" style={{ alignItems: 'center' }}>
           {group && (
-            <Link to={`/g/${group.slug}`} className="pill" style={{ background: C[group.color], textDecoration: 'none', padding: '5px 12px' }}>
+            <Link to={`/g/${group.slug}`} className="pill" style={{ textDecoration: 'none', padding: '3px 10px 3px 4px', gap: 6 }}>
+              <span style={{ width: 18, height: 18, borderRadius: 5, background: C[group.color], boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.1)' }} aria-hidden />
               {group.name}
             </Link>
           )}
@@ -362,7 +364,7 @@ export function Lawn() {
         <motion.div className="stack-lg center" style={{ alignItems: 'center' }} initial={{ scale: 0.95 }} animate={{ scale: 1 }}>
           <p className="display h3">{ev.title}</p>
           <p className="strong">Check in on On The Lawn with</p>
-          <p className="code" style={{ fontSize: 'clamp(3rem, 18vw, 6rem)', lineHeight: 1, background: 'var(--sun)', border: '3px solid var(--pine)', borderRadius: 20, padding: '10px 22px', boxShadow: 'var(--drop)' }}>{ev.gate}</p>
+          <p className="code" style={{ fontSize: 'clamp(3rem, 18vw, 6rem)', lineHeight: 1, background: 'var(--brand-tint)', color: 'var(--brand)', border: '1px solid color-mix(in srgb, var(--brand) 30%, white)', borderRadius: 16, padding: '12px 24px' }}>{ev.gate}</p>
           <p className="strong">New here? Scan to join first.</p>
           <QR text={inviteLink(ev, me.id)} size={200} label="Scan to join this lawn" />
         </motion.div>

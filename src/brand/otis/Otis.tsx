@@ -100,15 +100,9 @@ export function OtisAvatar({ look, size = 40, ring = true, style, title }: {
 }) {
   return (
     <span
-      className="otis-avatar"
+      className={`otis-avatar${ring ? ' ring' : ''}`}
       title={title}
-      style={{
-        width: size,
-        height: size,
-        background: C[look.card],
-        border: ring ? `${Math.max(2, Math.round(size / 22))}px solid ${C.pine}` : undefined,
-        ...style,
-      }}
+      style={{ width: size, height: size, background: C[look.card], ...style }}
     >
       <Otis look={look} frame="portrait" style={{ width: '100%' }} title={title} />
     </span>

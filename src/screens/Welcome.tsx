@@ -65,7 +65,7 @@ export function Welcome() {
 
   if (wide) {
     return (
-      <div className="shell bare" style={{ gap: 36, paddingTop: 'calc(env(safe-area-inset-top, 0px) + 48px)' }}>
+      <div className="shell bare art" style={{ gap: 36, paddingTop: 'calc(env(safe-area-inset-top, 0px) + 48px)' }}>
         <div className="cols even" style={{ alignItems: 'center', gap: 56 }}>
           <div className="col" style={{ gap: 26 }}>
             <motion.div initial={{ scale: 0.85, rotate: -3, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 13 }} style={{ transformOrigin: 'left center' }}>
@@ -97,7 +97,7 @@ export function Welcome() {
   }
 
   return (
-    <div className="shell bare" style={{ gap: 26, paddingTop: 'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
+    <div className="shell bare art" style={{ gap: 26, paddingTop: 'calc(env(safe-area-inset-top, 0px) + 28px)' }}>
       <div className="stack center" style={{ alignItems: 'center', gap: 14 }}>
         <motion.div initial={{ scale: 0.8, rotate: -4, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 13 }}>
           <Wordmark width="min(78vw, 330px)" />

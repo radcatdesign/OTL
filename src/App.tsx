@@ -69,6 +69,15 @@ function OpenShell() {
   return <Frame bare><Outlet /></Frame>;
 }
 
+// The illustrated sky and lawn only sit behind the welcome, sign-up and invite pages.
+// Everywhere else the platform is a clean workspace.
+function Backdrop() {
+  const me = useMe();
+  const { pathname } = useLocation();
+  const show = pathname === '/join' || pathname.startsWith('/invite') || (!me && pathname === '/');
+  return show ? <World /> : null;
+}
+
 // Scheduled campaigns go out when their time comes. Live, a server job does this.
 function CampaignClock() {
   const process = useStore((s) => s.processScheduled);
@@ -85,7 +94,7 @@ function AppRoutes() {
     <>
       <ScrollToTop />
       <CampaignClock />
-      <World />
+      <Backdrop />
       <Routes>
         <Route path="/" element={<Root />} />
         <Route path="/join" element={<Join />} />

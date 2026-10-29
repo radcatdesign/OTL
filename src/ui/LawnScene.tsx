@@ -20,7 +20,7 @@ export function LawnScene({ members, users, seeds, hostId, meId, onPick, onGarde
   const blooms = seeds.filter((s) => s.bloomedAt).slice(-3);
   return (
     <div
-      className="card flat"
+      className="card flat art"
       style={{ padding: 0, overflow: 'hidden', background: 'linear-gradient(180deg, #8fc3fb 0%, #d7ecfd 34%, #8cb200 34.2%, #86ad00 100%)', height: 'var(--scene-h, clamp(300px, 78vw, 400px))' }}
     >
       <svg aria-hidden viewBox="0 0 400 300" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>

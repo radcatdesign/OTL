@@ -77,7 +77,7 @@ export function Me() {
             const earned = b.earned(stats);
             const [have, need] = b.progress(stats);
             return (
-              <div key={b.key} className="stat" style={{ background: earned ? C.sun : C.paper, borderStyle: earned ? 'solid' : 'dashed', gap: 6 }}>
+              <div key={b.key} className={`badge-tile${earned ? ' earned' : ''}`}>
                 <div className="row" style={{ gap: 8 }}>
                   <span style={{ filter: earned ? 'none' : 'grayscale(1)', opacity: earned ? 1 : 0.5 }}><Icon name={b.icon} size={34} /></span>
                   <p className="strong" style={{ lineHeight: 1.1 }}>{b.name}</p>
@@ -204,7 +204,7 @@ function EditProfile({ open, onClose }: { open: boolean; onClose: () => void }) 
             {GUIDE_INTENTS.map((g) => {
               const on = intents.includes(g.key);
               return (
-                <button type="button" key={g.key} className="chip" aria-pressed={on} style={{ justifyContent: 'flex-start', ['--chip-on' as string]: C[g.color], color: on && ['forest', 'tomato'].includes(g.color) ? C.cream : undefined }} onClick={() => setIntents((xs) => (on ? xs.filter((x) => x !== g.key) : [...xs, g.key]))}>
+                <button type="button" key={g.key} className="chip" aria-pressed={on} style={{ justifyContent: 'flex-start' }} onClick={() => setIntents((xs) => (on ? xs.filter((x) => x !== g.key) : [...xs, g.key]))}>
                   <span className="dot" style={{ background: C[g.color] }} />{g.label}
                 </button>
               );

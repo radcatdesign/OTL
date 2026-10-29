@@ -37,7 +37,7 @@ export function ProfileCard({ user, lawns, width = 300, flippable = true, startF
   };
 
   return (
-    <div style={{ width, maxWidth: '100%', aspectRatio: '5 / 7', perspective: 1200, margin: '0 auto' }}>
+    <div className="art" style={{ width, maxWidth: '100%', aspectRatio: '5 / 7', perspective: 1200, margin: '0 auto' }}>
       <motion.button
         type="button"
         onClick={() => flippable && setFlipped((f) => !f)}

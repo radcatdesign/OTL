@@ -38,7 +38,7 @@ export function Join() {
   };
 
   return (
-    <div className="shell bare" style={{ gap: 20, maxWidth: step === 'otis' ? 1000 : 600 }}>
+    <div className="shell bare art" style={{ gap: 20, maxWidth: step === 'otis' ? 1000 : 600 }}>
       <div className="row" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 6px)' }}>
         <button className="btn cream small" onClick={() => (i === 0 ? nav('/') : go(STEPS[i - 1]))} aria-label="Back">Back</button>
         <div className="meter grow" aria-label={`Step ${i + 1} of ${STEPS.length}`} role="progressbar" aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={i + 1}>

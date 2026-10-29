@@ -10,7 +10,6 @@ import { fmtDay } from '../lib/util';
 import { RoleBadge } from '../ui/Bits';
 import { Sheet } from '../ui/Sheet';
 import { StartGroup } from '../ui/StartGroup';
-import { Tilt } from '../ui/Tilt';
 import { needsReply } from './admin/Inbox';
 
 function GroupCard({ g, db, meId }: { g: Group; db: DB; meId: string }) {
@@ -22,9 +21,8 @@ function GroupCard({ g, db, meId }: { g: Group; db: DB; meId: string }) {
   const fg = onColor(g.color);
   const inbox = isStaffRole(role) ? needsReply(db, g.id).length : 0;
   return (
-    <Tilt max={4}>
-      <article className="card stack" style={{ padding: 0, overflow: 'hidden', gap: 0 }}>
-        <Link to={`/g/${g.slug}`} style={{ textDecoration: 'none', color: fg, background: C[g.color], padding: '18px 18px 16px', borderBottom: '3px solid var(--pine)', display: 'block' }}>
+      <article className="card stack" style={{ padding: 0, overflow: 'hidden', gap: 0, height: '100%' }}>
+        <Link to={`/g/${g.slug}`} style={{ textDecoration: 'none', color: fg, background: C[g.color], padding: '16px 18px', borderBottom: '1px solid var(--border)', display: 'block' }}>
           <div className="row between" style={{ gap: 8, alignItems: 'flex-start' }}>
             <h3 className="display h3" style={{ color: fg }}>{g.name}</h3>
             {role && <RoleBadge role={role} short />}
@@ -43,14 +41,13 @@ function GroupCard({ g, db, meId }: { g: Group; db: DB; meId: string }) {
             <Link to={`/g/${g.slug}`} className="btn cream small">Open</Link>
             {isStaffRole(role) && (
               <Link to={`/g/${g.slug}/admin`} className="btn sun small">
-                Run it{inbox > 0 && <span className="pill" style={{ padding: '0 7px', fontSize: 11, background: C.cream }}>{inbox}</span>}
+                Run it{inbox > 0 && <span className="pill sun">{inbox}</span>}
               </Link>
             )}
             {!role && !isBanned(db, g.id, meId) && <button className="btn sun small" onClick={() => join(g.id)}>Join</button>}
           </div>
         </div>
       </article>
-    </Tilt>
   );
 }
 

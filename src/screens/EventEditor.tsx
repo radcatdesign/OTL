@@ -1,8 +1,9 @@
+import { MapPin } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Icon } from '../brand/icons';
 import { OtisAvatar } from '../brand/otis/Otis';
-import { C, COLOR_KEYS, COLOR_NAMES, type ColorKey } from '../brand/palette';
+import { C, COLOR_KEYS, COLOR_NAMES, tint, type ColorKey } from '../brand/palette';
 import { geocode, knownPlace, type Geo } from '../lib/geo';
 import { fileToDataUrl } from '../lib/media';
 import { canIn, groupsICanHost, roleIn, ROLE_INFO } from '../lib/perms';
@@ -176,13 +177,13 @@ export function EventEditor() {
 
   const previewC = (
     <div className="stack" style={{ gap: 12 }}>
-      <Cover cover={cover} ratio="16 / 9" style={{ boxShadow: 'var(--drop)' }} />
+      <Cover cover={cover} ratio="16 / 9" />
       <div className="card stack" style={{ gap: 10 }}>
         <p className="display h3">{title || 'Your lawn'}</p>
         <p className="strong">{Number.isNaN(startsAt) ? 'Pick a date' : `${fmtLongDay(startsAt)}, ${fmtRange(startsAt, endsAt)}`}</p>
         <p className="small strong muted">{venue || 'Somewhere in Bend'}{address ? `, ${address}` : ''}</p>
         <div className="row-wrap" style={{ alignItems: 'center' }}>
-          {group && <span className="pill" style={{ background: C[group.color] }}>{group.name}</span>}
+          {group && <span className="pill" style={tint(group.color)}>{group.name}</span>}
           {cohostIds.map((h) => { const u = db.users.find((x) => x.id === h); return u ? <span key={h} className="pill" style={{ padding: '2px 8px 2px 2px', gap: 5 }}><OtisAvatar look={u.otis} size={22} ring={false} />{u.id === me.id ? 'You' : u.name.split(' ')[0]}</span> : null; })}
         </div>
         {about && <p className="small" style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{about}</p>}
@@ -300,7 +301,7 @@ export function EventEditor() {
           <input id="ev-address" className="input" value={address} onChange={(e) => { setAddress(e.target.value); setGeo(undefined); }} placeholder="777 NW Riverside Blvd, Bend, OR" autoComplete="street-address" />
         </div>
         <button type="button" className="btn cream block" onClick={findOnMap} disabled={finding}>
-          <Icon name="location" size={24} /> {finding ? 'Looking it up' : geo ? 'Find it again' : 'Find it on the map'}
+          <MapPin size={16} strokeWidth={2} aria-hidden /> {finding ? 'Looking it up' : geo ? 'Find it again' : 'Find it on the map'}
         </button>
         {!wide && (venue || address) && <MapView geo={geo} place={[venue, address].filter(Boolean).join(', ')} height={190} approx={approx} />}
       </section>
