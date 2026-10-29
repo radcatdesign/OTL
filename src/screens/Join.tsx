@@ -5,7 +5,8 @@ import type { OtisLook } from '../brand/otis/Otis';
 import { C } from '../brand/palette';
 import { GUIDE_INTENTS, ROLES, type GuideIntent, type Role } from '../lib/intents';
 import { ROLE_LOOKS } from '../lib/presets';
-import { useStore } from '../lib/store';
+import { uid, useStore } from '../lib/store';
+import { PhotoPicker } from '../ui/Avatar';
 import { ProfileCard } from '../ui/ProfileCard';
 import { StudioPanel } from './StudioPanel';
 
@@ -29,6 +30,8 @@ export function Join() {
   const [look, setLook] = useState<OtisLook>(ROLE_LOOKS.Creator);
   const [err, setErr] = useState('');
   const [touchedLook, setTouchedLook] = useState(false);
+  const [photo, setPhoto] = useState<string | undefined>();
+  const [draftId] = useState(() => uid('u'));
 
   const i = STEPS.indexOf(step);
   const go = (s: Step) => { setErr(''); setStep(s); };
@@ -68,6 +71,7 @@ export function Join() {
               }}
             >
               <h1 className="display h2">Pull up a lawn chair</h1>
+              <PhotoPicker person={{ id: draftId, name: name || 'You', otis: look, photo }} onChange={setPhoto} />
               <div className="field">
                 <label htmlFor="join-name">Your name</label>
                 <input id="join-name" className="input" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="Maya Okafor" />
@@ -157,7 +161,7 @@ export function Join() {
                 className="btn sun block"
                 style={{ fontSize: '1.2rem', minHeight: 60 }}
                 onClick={() => {
-                  signUp({ name, email, role: role ?? 'Other', intents, otis: look, bio });
+                  signUp({ id: draftId, name, email, role: role ?? 'Other', intents, otis: look, bio, photo });
                   const st = useStore.getState();
                   const otl = st.demo ? st.db.groupMembers.find((m) => m.groupId === 'otl' && m.userId === st.me && m.role === 'cohost') : undefined;
                   celebrate({

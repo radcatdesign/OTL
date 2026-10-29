@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Icon } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { C, onColor } from '../brand/palette';
 import { isBanned, isStaffRole, roleIn } from '../lib/perms';
 import { useMe, useStore } from '../lib/store';
@@ -11,6 +10,7 @@ import { RoleBadge } from '../ui/Bits';
 import { Sheet } from '../ui/Sheet';
 import { StartGroup } from '../ui/StartGroup';
 import { needsReply } from './admin/Inbox';
+import { Avatar } from '../ui/Avatar';
 
 function GroupCard({ g, db, meId }: { g: Group; db: DB; meId: string }) {
   const join = useStore((s) => s.joinGroup);
@@ -32,7 +32,7 @@ function GroupCard({ g, db, meId }: { g: Group; db: DB; meId: string }) {
         <div className="stack" style={{ padding: 16, gap: 10 }}>
           <div className="row" style={{ gap: 10 }}>
             <div className="avatar-stack">
-              {members.slice(0, 5).map((m) => { const u = db.users.find((x) => x.id === m.userId); return u ? <OtisAvatar key={m.id} look={u.otis} size={30} /> : null; })}
+              {members.slice(0, 5).map((m) => { const u = db.users.find((x) => x.id === m.userId); return u ? <Avatar key={m.id} user={u} size={30} badge={false} /> : null; })}
             </div>
             <span className="small strong">{members.length} members, {lawns} {lawns === 1 ? 'lawn' : 'lawns'}</span>
           </div>

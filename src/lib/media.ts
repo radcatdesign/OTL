@@ -24,6 +24,33 @@ export async function fileToDataUrl(file: File, max = 1400, quality = 0.82): Pro
   }
 }
 
+// Profile photos: center-cropped to a square and kept small.
+export async function fileToSquareDataUrl(file: File, size = 320, quality = 0.84): Promise<string> {
+  if (!file.type.startsWith('image/')) throw new Error('That file is not an image.');
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject(new Error('That image could not be opened.'));
+      i.src = url;
+    });
+    const side = Math.min(img.naturalWidth, img.naturalHeight);
+    const sx = (img.naturalWidth - side) / 2;
+    const sy = (img.naturalHeight - side) / 2;
+    const out = Math.min(size, side);
+    const canvas = document.createElement('canvas');
+    canvas.width = out;
+    canvas.height = out;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('This browser cannot resize images.');
+    ctx.drawImage(img, sx, sy, side, side, 0, 0, out, out);
+    return canvas.toDataURL('image/jpeg', quality);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 type SaveResult = 'saved' | 'declined' | 'unavailable';
 type DownloadsNs = { save: (r: { filename: string; data: string }) => Promise<unknown> };
 type ClaudeHost = { use?: (name: string) => Promise<unknown> };

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { OtisAvatar } from '../../brand/otis/Otis';
 import { C } from '../../brand/palette';
 import { isStaffRole, roleIn } from '../../lib/perms';
 import { useStore } from '../../lib/store';
@@ -8,6 +7,7 @@ import type { ChatMessage, DB, Group, Id } from '../../lib/types';
 import { ago } from '../../lib/util';
 import { Empty } from '../../ui/Bits';
 import { Icon } from '../../brand/icons';
+import { Avatar } from '../../ui/Avatar';
 
 // Questions in this group's lawn chats that no host or moderator has answered yet.
 export function needsReply(db: DB, groupId: Id): ChatMessage[] {
@@ -55,7 +55,7 @@ export function Inbox({ group }: { group: Group }) {
           return (
             <article key={m.id} className="card stack" style={{ gap: 10, opacity: m.hiddenBy ? 0.6 : 1 }}>
               <div className="row" style={{ gap: 10 }}>
-                <OtisAvatar look={u.otis} size={40} />
+                <Avatar user={u} size={40} />
                 <div className="grow" style={{ minWidth: 0 }}>
                   <p className="strong" style={{ lineHeight: 1.15 }}>{u.name}{isStaffRole(role) ? ` (${role === 'moderator' ? 'mod' : 'host'})` : ''}</p>
                   <p className="small muted">in <Link to={`/lawn/${ev.id}`} state={{ tab: 'chat' }} className="strong">{ev.title}</Link>, {ago(m.createdAt)}</p>

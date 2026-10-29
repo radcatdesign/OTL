@@ -1,12 +1,12 @@
 import { Compass, Flower2, Home, Plus, UserRound, Users, type LucideIcon } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { OTLMark } from '../brand/Logo';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { C } from '../brand/palette';
 import { levelFor, statsFor, xpFor } from '../lib/game';
 import { isStaffRole, roleIn } from '../lib/perms';
 import { useMe, useStore } from '../lib/store';
 import { needsReply } from '../screens/admin/Inbox';
+import { Avatar } from './Avatar';
 
 export const NAV: { to: string; label: string; icon: LucideIcon; match: (p: string) => boolean }[] = [
   { to: '/', label: 'Lawns', icon: Home, match: (p) => p === '/' || (p.startsWith('/lawn/') && !p.endsWith('/garden')) || p === '/new' },
@@ -67,7 +67,7 @@ export function Sidebar() {
       <span className="grow" />
 
       <Link to="/me" className="side-me" aria-label={`Your profile, level ${lvl.number}, ${xp} XP`}>
-        <OtisAvatar look={me.otis} size={36} />
+        <Avatar user={me} size={36} />
         <span className="grow" style={{ minWidth: 0 }}>
           <span className="strong" style={{ display: 'block', fontSize: '0.875rem', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{me.name}</span>
           <span className="small muted" style={{ display: 'block', lineHeight: 1.3 }}>Lv {lvl.number} {lvl.name}, {xp} XP</span>

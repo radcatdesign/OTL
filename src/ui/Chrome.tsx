@@ -1,10 +1,10 @@
 import { Plus } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { OTLMark } from '../brand/Logo';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { levelFor, statsFor, xpFor } from '../lib/game';
 import { useMe, useStore } from '../lib/store';
 import { NAV } from './Sidebar';
+import { Avatar } from './Avatar';
 
 export function TopBar() {
   const me = useMe();
@@ -20,7 +20,7 @@ export function TopBar() {
       </Link>
       {me && (
         <Link to="/me" className="row" style={{ gap: 8, padding: '3px 10px 3px 3px', borderRadius: 999, border: '1px solid var(--border)', background: 'var(--surface)' }} aria-label={`Your profile, level ${lvl.number}`}>
-          <OtisAvatar look={me.otis} size={28} />
+          <Avatar user={me} size={28} />
           <span style={{ fontSize: '0.8125rem', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>Lv {lvl.number}<span className="muted" style={{ fontWeight: 500 }}> {xp} XP</span></span>
         </Link>
       )}

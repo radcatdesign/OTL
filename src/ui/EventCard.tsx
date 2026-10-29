@@ -1,10 +1,10 @@
 import { Clock, Flower2, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { userById, useStore } from '../lib/store';
 import type { LawnEvent } from '../lib/types';
 import { dateParts, fmtDay, fmtRange, isPast, whenLabel } from '../lib/util';
 import { Cover } from './Cover';
+import { Avatar } from './Avatar';
 
 // A lawn in a list: the illustrated cover on top, the facts underneath.
 export function EventCard({ ev, compact = false, note }: { ev: LawnEvent; compact?: boolean; note?: string }) {
@@ -39,7 +39,7 @@ export function EventCard({ ev, compact = false, note }: { ev: LawnEvent; compac
             <div className="avatar-stack">
               {people.slice(0, 4).map((m) => {
                 const u = userById(db, m.userId);
-                return u ? <OtisAvatar key={m.id} look={u.otis} size={24} /> : null;
+                return u ? <Avatar key={m.id} user={u} size={24} badge={false} /> : null;
               })}
             </div>
           )}

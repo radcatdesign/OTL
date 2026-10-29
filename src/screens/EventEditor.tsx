@@ -2,7 +2,6 @@ import { MapPin } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Icon } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { C, COLOR_KEYS, COLOR_NAMES, tint, type ColorKey } from '../brand/palette';
 import { geocode, knownPlace, type Geo } from '../lib/geo';
 import { fileToDataUrl } from '../lib/media';
@@ -16,6 +15,7 @@ import { Calendar, dayKey, monthStart } from '../ui/Calendar';
 import { Cover, COVER_ARTS } from '../ui/Cover';
 import { MapView } from '../ui/MapView';
 import { StartGroup } from '../ui/StartGroup';
+import { Avatar } from '../ui/Avatar';
 
 const DONATE_URL = (import.meta.env.VITE_OTL_DONATE_URL as string | undefined) || '';
 const AMOUNTS = [5, 15, 35, 75];
@@ -184,7 +184,7 @@ export function EventEditor() {
         <p className="small strong muted">{venue || 'Somewhere in Bend'}{address ? `, ${address}` : ''}</p>
         <div className="row-wrap" style={{ alignItems: 'center' }}>
           {group && <span className="pill" style={tint(group.color)}>{group.name}</span>}
-          {cohostIds.map((h) => { const u = db.users.find((x) => x.id === h); return u ? <span key={h} className="pill" style={{ padding: '2px 8px 2px 2px', gap: 5 }}><OtisAvatar look={u.otis} size={22} ring={false} />{u.id === me.id ? 'You' : u.name.split(' ')[0]}</span> : null; })}
+          {cohostIds.map((h) => { const u = db.users.find((x) => x.id === h); return u ? <span key={h} className="pill" style={{ padding: '2px 8px 2px 2px', gap: 5 }}><Avatar user={u} size={22} />{u.id === me.id ? 'You' : u.name.split(' ')[0]}</span> : null; })}
         </div>
         {about && <p className="small" style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{about}</p>}
         <div className="row-wrap">
@@ -271,7 +271,7 @@ export function EventEditor() {
             const on = cohostIds.includes(u.id);
             return (
               <button key={u.id} type="button" className="chip" aria-pressed={on} style={{ paddingLeft: 4 }} onClick={() => setCohostIds((xs) => (on ? xs.filter((x) => x !== u.id) : [...xs, u.id]))}>
-                <OtisAvatar look={u.otis} size={28} ring={false} />
+                <Avatar user={u} size={28} />
                 {u.id === me.id ? 'You' : u.name}
                 <span className="small" style={{ opacity: 0.7 }}>{ROLE_INFO[m.role].short}</span>
               </button>

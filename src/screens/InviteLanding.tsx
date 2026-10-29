@@ -1,8 +1,8 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Wordmark } from '../brand/Logo';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { membershipOf, userById, useMe, useStore } from '../lib/store';
 import { EventCard } from '../ui/EventCard';
+import { Avatar } from '../ui/Avatar';
 
 export function InviteLanding() {
   const { code, from } = useParams();
@@ -30,7 +30,7 @@ export function InviteLanding() {
       {!me && <div style={{ display: 'grid', placeItems: 'center' }}><Wordmark width={200} /></div>}
       {inviter && (
         <div className="row" style={{ justifyContent: 'center' }}>
-          <OtisAvatar look={inviter.otis} size={44} />
+          <Avatar user={inviter} size={44} />
           <p className="strong">{inviter.name} invited you to a lawn</p>
         </div>
       )}

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Icon } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { useMe, useStore } from '../lib/store';
 import type { LawnEvent } from '../lib/types';
 import { appUrl, copyText } from '../lib/util';
 import { QR } from './QR';
 import { Sheet } from './Sheet';
+import { Avatar } from './Avatar';
 
 export function inviteLink(ev: LawnEvent, fromId: string) {
   return `${appUrl()}#/invite/${ev.code}/${fromId}`;
@@ -70,7 +70,7 @@ export function InviteSheet({ ev, open, onClose }: { ev: LawnEvent; open: boolea
                     style={{ aspectRatio: 'auto', padding: '10px 4px', gap: 4, background: on ? 'var(--sun)' : 'var(--paper)' }}
                     onClick={() => setPicked((xs) => (on ? xs.filter((x) => x !== u.id) : [...xs, u.id]))}
                   >
-                    <OtisAvatar look={u.otis} size={46} />
+                    <Avatar user={u} size={46} />
                     <span className="small strong" style={{ lineHeight: 1.1 }}>{u.name.split(' ')[0]}</span>
                   </button>
                 );

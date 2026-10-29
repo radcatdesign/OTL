@@ -13,6 +13,7 @@ export interface User {
   link?: string;
   intents: GuideIntent[];
   otis: OtisLook;
+  photo?: string; // profile photo; without one, people get a drawn placeholder portrait
   createdAt: number;
   demo?: boolean; // seeded community member (demo mode only)
 }

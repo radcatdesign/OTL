@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { Icon } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { C } from '../brand/palette';
 import { fileToDataUrl } from '../lib/media';
 import { can, isStaffRole, roleIn } from '../lib/perms';
@@ -8,6 +7,7 @@ import { membershipOf, userById, useMe, useStore } from '../lib/store';
 import type { LawnEvent } from '../lib/types';
 import { ago } from '../lib/util';
 import { Sheet } from './Sheet';
+import { Avatar } from './Avatar';
 
 function Heart({ on }: { on: boolean }) {
   return (
@@ -111,7 +111,7 @@ export function PhotoWall({ ev, onRsvp }: { ev: LawnEvent; onRsvp: () => void })
             <div className="stack">
               <img src={current.src} alt={current.caption} style={{ width: '100%', maxHeight: '62vh', objectFit: 'contain', borderRadius: 12, background: 'var(--surface-2)' }} />
               <div className="row">
-                {u && <OtisAvatar look={u.otis} size={36} />}
+                {u && <Avatar user={u} size={36} />}
                 <div className="grow">
                   <p className="strong">{current.caption || 'No caption'}</p>
                   <p className="small muted">{u?.id === me.id ? 'You' : u?.name}, {ago(current.createdAt)}</p>

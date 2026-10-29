@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { Plant, STAGES, STAGE_NAMES } from '../brand/Plant';
 import { C } from '../brand/palette';
 import { SEED_INTENT, SEED_INTENTS, type SeedIntent } from '../lib/intents';
@@ -15,6 +14,7 @@ import { Tilt } from '../ui/Tilt';
 import { useWide } from '../lib/useWide';
 import { Tabs } from '../ui/Bits';
 import { GardenWalk, type GardenWalkHandle } from '../ui/GardenWalk';
+import { Avatar } from '../ui/Avatar';
 
 type View = 'walk' | 'list';
 const VIEW_KEY = 'otl-garden-view';
@@ -246,12 +246,12 @@ function Plot({ seed, db, meId, onOpen }: { seed: Seed; db: DB; meId: string; on
           <span className="small strong" style={{ color: 'var(--ink-soft)' }}>{info.label}</span>
           <p className="strong" style={{ lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{seed.title}</p>
           <div className="row" style={{ marginTop: 'auto', gap: 6 }}>
-            {planter && <OtisAvatar look={planter.otis} size={26} />}
+            {planter && <Avatar user={planter} size={26} />}
             {seed.bloomedAt ? (
               <>
                 <span className="small strong">+</span>
                 <div className="avatar-stack">
-                  {seed.partners.map((p) => { const u = userById(db, p); return u ? <OtisAvatar key={p} look={u.otis} size={26} /> : null; })}
+                  {seed.partners.map((p) => { const u = userById(db, p); return u ? <Avatar key={p} user={u} size={26} badge={false} /> : null; })}
                 </div>
               </>
             ) : (
@@ -287,7 +287,7 @@ function NewsRow({ a, db, meId, onSeed }: { a: Activity; db: DB; meId: string; o
     `${name(who)} checked in`;
   return (
     <button className="list-row" style={{ background: 'none', border: 0, width: '100%', textAlign: 'left', alignItems: 'center' }} onClick={() => seed && onSeed(seed.id)} disabled={!seed}>
-      <OtisAvatar look={who.otis} size={36} />
+      <Avatar user={who} size={36} />
       <div className="grow">
         <p className="strong" style={{ lineHeight: 1.2 }}>{text}</p>
         {seed && <p className="small muted" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{seed.title}</p>}
@@ -458,7 +458,7 @@ function SeedSheet({ seedId, onClose, onPerson, onWater }: {
           {seed.link && <a className="strong" href={seed.link} target="_blank" rel="noreferrer" style={{ wordBreak: 'break-all' }}>{seed.link}</a>}
           {planter && (
             <button className="row" style={{ background: 'none', border: 0, padding: 0, gap: 8, marginTop: 4 }} onClick={() => onPerson(planter.id)}>
-              <OtisAvatar look={planter.otis} size={34} />
+              <Avatar user={planter} size={34} />
               <span className="strong">{planter.id === me.id ? 'You planted this' : `Planted by ${planter.name}`}</span>
               <span className="small muted">{ago(seed.createdAt)}</span>
             </button>
@@ -468,7 +468,7 @@ function SeedSheet({ seedId, onClose, onPerson, onWater }: {
         {seed.bloomedAt && (
           <div className="card flat stack" style={{ background: C.sun, alignItems: 'center', textAlign: 'center' }}>
             <div className="row" style={{ justifyContent: 'center' }}>
-              {[seed.userId, ...seed.partners].map((id) => { const u = userById(db, id); return u ? <OtisAvatar key={id} look={u.otis} size={48} /> : null; })}
+              {[seed.userId, ...seed.partners].map((id) => { const u = userById(db, id); return u ? <Avatar key={id} user={u} size={48} /> : null; })}
             </div>
             <p className="strong">{[seed.userId, ...seed.partners].map((id) => (id === me.id ? 'You' : userById(db, id)?.name.split(' ')[0])).join(' and ')} are growing this together.</p>
           </div>
@@ -486,7 +486,7 @@ function SeedSheet({ seedId, onClose, onPerson, onWater }: {
               return (
                 <div key={w.id} className="list-row">
                   <button style={{ background: 'none', border: 0, padding: 0 }} onClick={() => onPerson(u.id)} aria-label={`See ${u.name}'s card`}>
-                    <OtisAvatar look={u.otis} size={40} />
+                    <Avatar user={u} size={40} />
                   </button>
                   <div className="grow stack" style={{ gap: 2 }}>
                     <p className="strong">{u.id === me.id ? 'You' : u.name} <span className="small muted">{ago(w.createdAt)}</span></p>

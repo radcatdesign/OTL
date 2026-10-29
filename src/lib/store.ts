@@ -64,10 +64,10 @@ interface State {
   toasts: Toast[];
   celebration: Celebration | null;
   // auth
-  signUp: (p: { name: string; email: string; role: Role; intents: GuideIntent[]; otis: OtisLook; bio?: string }) => User;
+  signUp: (p: { id?: Id; name: string; email: string; role: Role; intents: GuideIntent[]; otis: OtisLook; bio?: string; photo?: string }) => User;
   signIn: (email: string) => boolean;
   signOut: () => void;
-  updateMe: (patch: Partial<Pick<User, 'name' | 'bio' | 'link' | 'role' | 'intents' | 'otis'>>) => void;
+  updateMe: (patch: Partial<Pick<User, 'name' | 'bio' | 'link' | 'role' | 'intents' | 'otis' | 'photo'>>) => void;
   // groups
   createGroup: (p: { name: string; tagline: string; about: string; color: ColorKey }) => Group;
   updateGroup: (groupId: Id, patch: Partial<Pick<Group, 'name' | 'tagline' | 'about' | 'color' | 'replyTo'>>) => void;
@@ -200,8 +200,8 @@ export const useStore = create<State>()(
         // ---------- auth ----------
         signUp: (p) => {
           const user: User = {
-            id: uid('u'), name: p.name.trim(), email: p.email.trim().toLowerCase(), role: p.role,
-            bio: p.bio ?? '', intents: p.intents, otis: p.otis, createdAt: Date.now(),
+            id: p.id ?? uid('u'), name: p.name.trim(), email: p.email.trim().toLowerCase(), role: p.role,
+            bio: p.bio ?? '', intents: p.intents, otis: p.otis, photo: p.photo, createdAt: Date.now(),
           };
           set((s) => {
             let db: DB = { ...s.db, users: [...s.db.users, user] };

@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Icon, type IconKey } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { levelFor, statsFor, xpFor, XP } from '../lib/game';
 import { userById, useMe, useStore } from '../lib/store';
 import { isPast } from '../lib/util';
 import { useWide } from '../lib/useWide';
 import { EventCard } from '../ui/EventCard';
+import { Avatar } from '../ui/Avatar';
 
 export function Home() {
   const me = useMe()!;
@@ -49,7 +49,7 @@ export function Home() {
             <h1 id="hello" className="display h2">Hi, {me.name.split(' ')[0]}</h1>
             <p className="muted strong">Level {lvl.number}, {lvl.name}. {lvl.next ? `${lvl.toNext} XP to ${lvl.next.name}.` : 'Top of the lawn.'}</p>
           </div>
-          <OtisAvatar look={me.otis} size={64} />
+          <Avatar user={me} size={64} />
         </div>
         <div className="meter" aria-label="Progress to next level"><span style={{ width: `${Math.round(lvl.progress * 100)}%` }} /></div>
       </section>

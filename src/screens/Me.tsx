@@ -6,6 +6,7 @@ import { BADGES, levelFor, statsFor, xpFor } from '../lib/game';
 import { GUIDE_INTENTS, ROLES, type GuideIntent, type Role } from '../lib/intents';
 import { useMe, useStore } from '../lib/store';
 import { fmtDay } from '../lib/util';
+import { Avatar, PhotoPicker } from '../ui/Avatar';
 import { ProfileCard } from '../ui/ProfileCard';
 import { Sheet } from '../ui/Sheet';
 import { useWide } from '../lib/useWide';
@@ -33,11 +34,19 @@ export function Me() {
       <ProfileCard user={me} lawns={stats.lawns} width="min(80vw, 290px)" />
       <p className="pill" style={{ alignSelf: 'center' }}>Tap your card to flip it</p>
 
-      <div className="grid-2">
-        <Link to="/studio" className="btn sun">Dress Otis</Link>
-        <button className="btn cream" onClick={() => setEditing(true)}>Edit profile</button>
-      </div>
+      <Link to="/studio" className="btn sun block">Dress your Otis</Link>
     </>;
+  const headerC = (
+    <section className="card row" style={{ gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+      <Avatar user={me} size={wide ? 96 : 76} />
+      <div className="grow stack" style={{ gap: 2, minWidth: 180 }}>
+        <h1 className="display h2">{me.name}</h1>
+        <p className="muted">{me.role}</p>
+        {me.bio && <p className="small" style={{ marginTop: 2 }}>{me.bio}</p>}
+      </div>
+      <button className="btn cream" onClick={() => setEditing(true)}>Edit profile</button>
+    </section>
+  );
   const lawnCountC = <>
       <section className="card stack" aria-labelledby="lawn-count">
         <div className="row" style={{ alignItems: 'center' }}>
@@ -126,6 +135,7 @@ export function Me() {
 
   return (
     <>
+      {headerC}
       {wide ? (
         <div className="cols lead">
           <div className="rail" style={{ gap: 16 }}>
@@ -166,6 +176,7 @@ function EditProfile({ open, onClose }: { open: boolean; onClose: () => void }) 
   const [link, setLink] = useState(me.link ?? '');
   const [role, setRole] = useState<Role>(me.role);
   const [intents, setIntents] = useState<GuideIntent[]>(me.intents);
+  const [photo, setPhoto] = useState<string | undefined>(me.photo);
 
   return (
     <Sheet open={open} onClose={onClose} label="Edit profile">
@@ -174,12 +185,13 @@ function EditProfile({ open, onClose }: { open: boolean; onClose: () => void }) 
         onSubmit={(e) => {
           e.preventDefault();
           if (!name.trim()) return;
-          update({ name: name.trim(), bio: bio.trim(), link: link.trim() || undefined, role, intents });
+          update({ name: name.trim(), bio: bio.trim(), link: link.trim() || undefined, role, intents, photo });
           toast({ text: 'Profile saved', tone: 'good' });
           onClose();
         }}
       >
         <h2 className="display h2">Edit profile</h2>
+        <PhotoPicker person={{ ...me, name: name || me.name, photo }} onChange={setPhoto} />
         <div className="field">
           <label htmlFor="ep-name">Name</label>
           <input id="ep-name" className="input" value={name} onChange={(e) => setName(e.target.value)} />

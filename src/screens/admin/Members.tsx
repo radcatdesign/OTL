@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { Icon } from '../../brand/icons';
-import { OtisAvatar } from '../../brand/otis/Otis';
 import { C } from '../../brand/palette';
 import { validEmail } from '../../lib/email';
 import { groupStats } from '../../lib/groupStats';
@@ -13,6 +12,7 @@ import { ago, appUrl, copyText, fmtDay } from '../../lib/util';
 import { Locked, RoleBadge } from '../../ui/Bits';
 import { PersonSheet } from '../../ui/PersonSheet';
 import { Sheet } from '../../ui/Sheet';
+import { Avatar } from '../../ui/Avatar';
 
 // The croquet mallet from the OTL icon set, swung as the ban hammer.
 function Mallet({ size = 120 }: { size?: number }) {
@@ -40,7 +40,7 @@ function BanSheet({ group, target, onClose }: { group: Group; target: User | nul
         <div className="stack-lg">
           <div style={{ position: 'relative', height: 170, display: 'grid', placeItems: 'center' }}>
             <motion.div animate={done ? { scale: 0.6, opacity: 0.35, y: 18, rotate: 8 } : { scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 14 }}>
-              <OtisAvatar look={target.otis} size={110} />
+              <Avatar user={target} size={110} />
             </motion.div>
             <AnimatePresence>
               {swing && (
@@ -248,7 +248,7 @@ export function Members({ group }: { group: Group }) {
                 <tr key={m.id}>
                   <td>
                     <button className="row" style={{ background: 'none', border: 0, padding: 0, gap: 10, textAlign: 'left' }} onClick={() => setPerson(u.id)}>
-                      <OtisAvatar look={u.otis} size={34} />
+                      <Avatar user={u} size={34} />
                       <span style={{ minWidth: 0 }}>
                         <span className="strong" style={{ display: 'block' }}>{u.id === me.id ? `${u.name} (you)` : u.name}</span>
                         {can(myRole, 'manageEmail') && <span className="small muted">{u.email}</span>}
@@ -273,7 +273,7 @@ export function Members({ group }: { group: Group }) {
             {rows.map(({ m, u, s }) => (
               <div key={m.id} className="stack" style={{ gap: 8, padding: '12px 0' }}>
                 <div className="row" style={{ gap: 10 }}>
-                  <button style={{ background: 'none', border: 0, padding: 0 }} onClick={() => setPerson(u.id)} aria-label={`See ${u.name}'s card`}><OtisAvatar look={u.otis} size={40} /></button>
+                  <button style={{ background: 'none', border: 0, padding: 0 }} onClick={() => setPerson(u.id)} aria-label={`See ${u.name}'s card`}><Avatar user={u} size={40} /></button>
                   <div className="grow" style={{ minWidth: 0 }}>
                     <p className="strong" style={{ lineHeight: 1.15 }}>{u.id === me.id ? `${u.name} (you)` : u.name}</p>
                     <p className="small muted">{s?.checkins ?? 0} check-ins, active {s && s.lastActive ? ago(s.lastActive) : 'never'}</p>

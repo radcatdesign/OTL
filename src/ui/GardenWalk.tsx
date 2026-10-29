@@ -1,6 +1,7 @@
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Icon } from '../brand/icons';
-import { Otis, OtisAvatar } from '../brand/otis/Otis';
+import { Otis } from '../brand/otis/Otis';
 import { Plant, STAGE_NAMES, type Stage } from '../brand/Plant';
 import { C } from '../brand/palette';
 import { flowerHead } from '../brand/otis/parts';
@@ -9,6 +10,7 @@ import { userById, useMe, useStore } from '../lib/store';
 import type { LawnEvent, Seed, User } from '../lib/types';
 import { firstName, stageOf } from '../lib/util';
 import { useWide } from '../lib/useWide';
+import { Avatar } from './Avatar';
 
 // ---------- the plot ----------
 // World units. The camera follows your Otis around a plot bigger than the screen.
@@ -344,6 +346,38 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
   const [focus, setFocus] = useState<string | null>(null);
   const [hint, setHint] = useState(true);
   const [acting, setActing] = useState(false);
+
+  // Fullscreen: the garden fills the window. Where the browser allows it, the page also goes
+  // properly fullscreen; sheets still open on top because they live outside the garden.
+  const [full, setFull] = useState(false);
+  const fullRef = useRef(false);
+  fullRef.current = full;
+  const enterFull = () => {
+    setFull(true);
+    setHint(false);
+    try {
+      const d = document.documentElement as HTMLElement & { webkitRequestFullscreen?: () => void };
+      if (document.fullscreenEnabled && d.requestFullscreen) d.requestFullscreen().catch(() => { /* window-filling mode only */ });
+      else d.webkitRequestFullscreen?.();
+    } catch { /* window-filling mode only */ }
+  };
+  const exitFull = () => {
+    setFull(false);
+    try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch { /* noop */ }
+  };
+  useEffect(() => {
+    const onChange = () => { if (!document.fullscreenElement && fullRef.current) setFull(false); };
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+  useEffect(() => {
+    if (!full) return;
+    document.body.classList.add('gw-full');
+    return () => { document.body.classList.remove('gw-full'); };
+  }, [full]);
+  useEffect(() => () => { try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch { /* noop */ } }, []);
+  const fullApi = useRef({ enterFull, exitFull });
+  fullApi.current = { enterFull, exitFull };
   const mountedAt = useRef(Date.now());
 
   const npcUsers = useMemo(() => {
@@ -462,6 +496,8 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
       if (MOVE.has(k)) { keys.current.add(k); e.preventDefault(); setHint(false); return; }
       if ((k === 'e' || k === ' ' || k === 'enter') && focusRef.current && !(e.target instanceof HTMLButtonElement)) { e.preventDefault(); cbs.current.onOpenSeed(focusRef.current); }
       if (k === 'p') { e.preventDefault(); onPlantHereRef.current(); }
+      if (k === 'f') { e.preventDefault(); if (fullRef.current) fullApi.current.exitFull(); else fullApi.current.enterFull(); }
+      if (k === 'escape' && fullRef.current && !document.fullscreenElement) { e.preventDefault(); fullApi.current.exitFull(); }
     };
     const up = (e: KeyboardEvent) => keys.current.delete(e.key.toLowerCase());
     const blur = () => keys.current.clear();
@@ -604,7 +640,8 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
       for (const { id, p } of plantsPos.current) { const d = dist(pl, p); if (d < bd) { bd = d; best = id; } }
       if (best !== focusRef.current) { focusRef.current = best; setFocus(best); }
 
-      // camera
+      // camera (focus moving into the world can scroll a clipped box; keep it pinned)
+      if (vp && (vp.scrollLeft || vp.scrollTop)) { vp.scrollLeft = 0; vp.scrollTop = 0; }
       if (vp && world.current) {
         const vw = vp.clientWidth / scale, vh = vp.clientHeight / scale;
         const clampX = (x: number) => (W <= vw ? (W - vw) / 2 : Math.min(W - vw, Math.max(0, x)));
@@ -662,7 +699,7 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
   const thirsty = seeds.filter((s) => !s.bloomedAt && !(counts.get(s.id) ?? 0) && s.userId !== me.id).length;
 
   return (
-    <section className="gw" aria-label={`${ev.title} garden. Walk around, plant seeds and water other people's.`}>
+    <section className={`gw${full ? ' is-full' : ''}`} aria-label={`${ev.title} garden. Walk around, plant seeds and water other people's.`}>
       <div
         ref={viewport}
         className="gw-viewport"
@@ -730,7 +767,7 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
                 <span className="row" style={{ gap: 6 }}><span className="dot" style={{ background: C[fInfo.color] }} /><span className="small strong">{fInfo.ask}</span></span>
                 <p className="strong" style={{ lineHeight: 1.2 }}>{fSeed.title}</p>
                 <span className="row" style={{ gap: 6 }}>
-                  {fPlanter && <OtisAvatar look={fPlanter.otis} size={22} />}
+                  {fPlanter && <Avatar user={fPlanter} size={22} />}
                   {fSeed.bloomedAt
                     ? <span className="small strong">{[fSeed.userId, ...fSeed.partners].map((id) => (id === me.id ? 'You' : firstName(userById(db, id)?.name ?? ''))).join(' and ')} are growing this</span>
                     : <span className="small strong">{fMine ? 'Your seed' : firstName(fPlanter?.name ?? 'Someone')}, {STAGE_NAMES[fStage].toLowerCase()}, watered {fCount}x</span>}
@@ -744,6 +781,7 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
 
         {/* HUD */}
         <div className="gw-hud-top">
+          {full && <span className="pill gw-pill gw-title">{ev.title}</span>}
           <span className="pill gw-pill">{seeds.length} {seeds.length === 1 ? 'seed' : 'seeds'}, {blooms} in bloom{thirsty ? `, ${thirsty} thirsty` : ''}</span>
         </div>
         <svg className="gw-mini" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Map of the garden" onPointerDown={(e) => e.stopPropagation()} onPointerUp={(e) => {
@@ -759,6 +797,17 @@ export const GardenWalk = forwardRef<GardenWalkHandle, {
           <rect ref={miniView} fill="none" stroke={C.cream} strokeWidth="18" rx="20" />
           <circle ref={miniMe} r="40" fill={C.tomato} stroke={C.cream} strokeWidth="14" />
         </svg>
+        <button
+          type="button"
+          className="btn cream small icon gw-full-btn"
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          onClick={() => (full ? exitFull() : enterFull())}
+          aria-label={full ? 'Exit fullscreen' : 'Fullscreen'}
+          title={full ? 'Exit fullscreen (F)' : 'Fullscreen (F)'}
+        >
+          {full ? <Minimize2 size={18} strokeWidth={2.4} aria-hidden /> : <Maximize2 size={18} strokeWidth={2.4} aria-hidden />}
+        </button>
         {hint && (
           <div className="gw-hint" role="note" onPointerDown={(e) => e.stopPropagation()} onPointerUp={(e) => e.stopPropagation()}>
             <span><b>{wide ? 'Walk with the arrow keys or WASD,' : 'Tap anywhere to walk there,'}</b> or {wide ? 'click' : 'tap'} a plant to go to it. Get close to a seed to water it.</span>

@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, type IconKey } from '../../brand/icons';
-import { OtisAvatar } from '../../brand/otis/Otis';
 import { groupStats } from '../../lib/groupStats';
 import { useStore } from '../../lib/store';
 import type { Group } from '../../lib/types';
 import { useWide } from '../../lib/useWide';
 import { fmtDay } from '../../lib/util';
 import { AttendanceBars, GrowthChart } from '../../ui/Charts';
+import { Avatar } from '../../ui/Avatar';
 
 export function Overview({ group }: { group: Group }) {
   const db = useStore((s) => s.db);
@@ -123,7 +123,7 @@ export function Overview({ group }: { group: Group }) {
           return (
             <div key={m.userId} className="list-row" style={{ alignItems: 'center' }}>
               <span className="strong" style={{ width: 18, fontVariantNumeric: 'tabular-nums' }}>{i + 1}</span>
-              <OtisAvatar look={u.otis} size={36} />
+              <Avatar user={u} size={36} />
               <div className="grow" style={{ minWidth: 0 }}>
                 <p className="strong" style={{ lineHeight: 1.1 }}>{u.name}</p>
                 <p className="small muted">{m.checkins} check-ins, {m.seeds + m.waterings} garden actions</p>

@@ -16,6 +16,7 @@ create table if not exists public.profiles (
   link text,
   intents text[] not null default '{}',         -- GuideIntent keys from Otis' guide
   otis jsonb not null,                           -- OtisLook: hat, overalls, tool, band, companion, card
+  photo_path text,                               -- profile photo in the avatars bucket; the gnome shows as a corner badge
   created_at timestamptz not null default now()
 );
 
@@ -587,12 +588,19 @@ create policy "admins see send results" on public.campaign_sends for select to a
 -- Storage --------------------------------------------------------------------
 -- Buckets: lawn-photos (photo wall), covers (hero images), email-images (campaign images, public so inboxes can load them).
 insert into storage.buckets (id, name, public) values
+  ('avatars', 'avatars', true),
   ('lawn-photos', 'lawn-photos', false),
   ('covers', 'covers', true),
   ('email-images', 'email-images', true)
 on conflict (id) do nothing;
 
--- Paths are <lawn_id>/<file> for photos and covers, <group_id>/<file> for email images.
+-- Paths are <user_id>/<file> for avatars, <lawn_id>/<file> for photos and covers, <group_id>/<file> for email images.
+create policy "people upload their own photo" on storage.objects for insert to authenticated
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "people replace their own photo" on storage.objects for update to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "people remove their own photo" on storage.objects for delete to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
 create policy "see photos on lawns you can see" on storage.objects for select to authenticated
   using (bucket_id = 'lawn-photos' and public.lawn_visible(((storage.foldername(name))[1])::uuid));
 create policy "upload photos to your lawns" on storage.objects for insert to authenticated

@@ -59,12 +59,13 @@ export function otisMarkup(look: OtisLook, uid: string, opts: { shadow?: boolean
   ].join('');
 }
 
-type Frame = 'full' | 'portrait';
+type Frame = 'full' | 'portrait' | 'badge';
 
 // full: the whole character. portrait: hat tip to chin, for avatars.
 const VIEWBOX: Record<Frame, string> = {
   full: '-6 -2 241 409',
   portrait: '-2 128 218 218',
+  badge: '6 92 206 206', // hat brim, glasses and face: reads at small sizes
 };
 
 export const Otis = memo(function Otis({

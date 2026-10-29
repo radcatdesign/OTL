@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '../brand/icons';
-import { Otis, OtisAvatar } from '../brand/otis/Otis';
+import { Otis } from '../brand/otis/Otis';
 import { C, onColor } from '../brand/palette';
 import { can, isBanned, isStaffRole, roleIn, ROLE_INFO } from '../lib/perms';
 import { groupBySlug, useMe, useStore } from '../lib/store';
@@ -11,6 +11,7 @@ import { Calendar, monthStart } from '../ui/Calendar';
 import { EventCard } from '../ui/EventCard';
 import { PersonSheet } from '../ui/PersonSheet';
 import { needsReply } from './admin/Inbox';
+import { Avatar } from '../ui/Avatar';
 
 export function GroupPage() {
   const { slug } = useParams();
@@ -78,7 +79,7 @@ export function GroupPage() {
           <p className="small strong muted">members, {visible.length} {visible.length === 1 ? 'lawn' : 'lawns'}, {blooms} {blooms === 1 ? 'flower' : 'flowers'} grown</p>
         </div>
         <div className="avatar-stack">
-          {members.slice(0, 6).map((m) => { const u = db.users.find((x) => x.id === m.userId); return u ? <OtisAvatar key={m.id} look={u.otis} size={36} /> : null; })}
+          {members.slice(0, 6).map((m) => { const u = db.users.find((x) => x.id === m.userId); return u ? <Avatar key={m.id} user={u} size={36} badge={false} /> : null; })}
         </div>
       </div>
       {banned ? (
@@ -123,7 +124,7 @@ export function GroupPage() {
           if (!u) return null;
           return (
             <button key={m.id} className="list-row" style={{ width: '100%', background: 'none', border: 0, textAlign: 'left', cursor: 'pointer', font: 'inherit', color: 'inherit' }} onClick={() => setPerson(u.id)}>
-              <OtisAvatar look={u.otis} size={40} />
+              <Avatar user={u} size={40} />
               <span className="grow strong">{u.id === me.id ? 'You' : u.name}</span>
               <RoleBadge role={m.role} short />
             </button>

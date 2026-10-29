@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Icon } from '../brand/icons';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { C } from '../brand/palette';
 import { can, isStaffRole, roleIn } from '../lib/perms';
 import { canEnterGarden, groupById, membershipOf, userById, useMe, useStore } from '../lib/store';
@@ -21,6 +20,7 @@ import { PersonSheet } from '../ui/PersonSheet';
 import { PhotoWall } from '../ui/PhotoWall';
 import { QR } from '../ui/QR';
 import { Sheet } from '../ui/Sheet';
+import { Avatar } from '../ui/Avatar';
 
 type Tab = 'about' | 'chat' | 'photos' | 'lawn';
 
@@ -138,7 +138,7 @@ export function Lawn() {
           )}
           {hosts.map((h) => (
             <button key={h.id} className="pill" style={{ padding: '3px 10px 3px 3px', gap: 6, cursor: 'pointer' }} onClick={() => setPerson(h.id)}>
-              <OtisAvatar look={h.otis} size={26} ring={false} /> {h.id === me.id ? 'You' : h.name}
+              <Avatar user={h} size={26} /> {h.id === me.id ? 'You' : h.name}
             </button>
           ))}
         </div>
@@ -247,7 +247,7 @@ export function Lawn() {
           if (!u) return null;
           return (
             <button key={m.id} className="stack center" style={{ background: 'none', border: 0, padding: 0, gap: 4, alignItems: 'center' }} onClick={() => setPerson(u.id)}>
-              <OtisAvatar look={u.otis} size={48} />
+              <Avatar user={u} size={48} />
               <span className="small strong" style={{ lineHeight: 1.1 }}>{u.id === me.id ? 'You' : u.name.split(' ')[0]}</span>
             </button>
           );

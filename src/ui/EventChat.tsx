@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { OtisAvatar } from '../brand/otis/Otis';
 import { C } from '../brand/palette';
 import { can, isStaffRole, roleIn } from '../lib/perms';
 import { membershipOf, userById, useMe, useStore } from '../lib/store';
 import type { ChatMessage, LawnEvent } from '../lib/types';
 import { ago } from '../lib/util';
 import { RoleBadge } from './Bits';
+import { Avatar } from './Avatar';
 
 export function EventChat({ ev, onRsvp, onPerson }: { ev: LawnEvent; onRsvp: () => void; onPerson: (id: string) => void }) {
   const me = useMe()!;
@@ -58,7 +58,7 @@ export function EventChat({ ev, onRsvp, onPerson }: { ev: LawnEvent; onRsvp: () 
           return (
             <div key={m.id} className="row" style={{ alignItems: 'flex-start', gap: 10, padding: '8px 4px', opacity: m.hiddenBy ? 0.5 : 1 }}>
               <button style={{ background: 'none', border: 0, padding: 0 }} onClick={() => onPerson(u.id)} aria-label={`See ${u.name}'s card`}>
-                <OtisAvatar look={u.otis} size={38} />
+                <Avatar user={u} size={38} />
               </button>
               <div className="grow stack" style={{ gap: 3 }}>
                 <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>

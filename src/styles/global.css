@@ -510,3 +510,19 @@ kbd { font: 600 0.75rem var(--font-code); border: 1px solid currentColor; border
 .toast[data-tone='info'] .toast-dot { background: var(--sky); }
 .toast[data-tone='error'] .toast-dot { background: var(--danger); }
 .toast[data-tone='error'] { border-color: #f3c6b6; }
+
+/* ---------- People ---------- */
+.avatar { position: relative; display: inline-block; flex: none; vertical-align: middle; }
+.avatar-img { display: block; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: var(--surface-2); box-shadow: inset 0 0 0 1px rgba(23, 34, 26, 0.08); }
+.avatar-img img, .avatar-img svg { display: block; width: 100%; height: 100%; object-fit: cover; }
+.avatar-badge {
+  position: absolute; right: -6%; bottom: -6%; border-radius: 50%; overflow: hidden;
+  display: flex; align-items: flex-start; justify-content: center;
+  border: 2px solid var(--surface); box-shadow: 0 1px 3px rgba(23, 34, 26, 0.2);
+}
+.avatar-stack .avatar-img { box-shadow: 0 0 0 2px var(--surface); }
+.avatar-pick { position: relative; padding: 0; border: 0; background: none; border-radius: 50%; flex: none; }
+.avatar-pick-cam {
+  position: absolute; left: -2px; bottom: -2px; width: 28px; height: 28px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--surface); color: var(--ink); border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm);
+}
