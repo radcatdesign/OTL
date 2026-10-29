@@ -381,7 +381,7 @@ kbd { font: 600 0.75rem var(--font-code); border: 1px solid currentColor; border
 .cols.lead { grid-template-columns: 360px minmax(0, 1fr); }
 .col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 .rail { display: flex; flex-direction: column; gap: 16px; min-width: 0; position: sticky; top: 24px; }
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 18px; align-items: stretch; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; align-items: stretch; }
 .plot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 16px; }
 .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .page-head .display { margin-top: 2px; }
